@@ -32,7 +32,7 @@ public class LancementLatice extends Application {
         
         Scene scene = new Scene(root);
         primaryStage.setTitle("Jeu Latice");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_latice/img/icone.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_Latice/img/icone.png")));
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest(event -> musique.arreterMusique());
         primaryStage.setResizable(false);

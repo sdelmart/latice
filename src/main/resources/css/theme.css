@@ -1,0 +1,150 @@
+/* Latice — thème "océan nocturne" */
+
+.root {
+    -fx-font-family: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+    -accent: #e8b04b;
+    -accent-dark: #c8912f;
+    -ink: #0a1f33;
+    -ink-light: #123a5c;
+    -text-light: #f3ecd9;
+}
+
+.background-ocean {
+    -fx-background-color: #0a1f33;
+    -fx-background-image: url('/images/img_Latice/img/fond.png');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+.title-latice {
+    -fx-font-family: "Georgia", serif;
+    -fx-font-size: 64px;
+    -fx-font-weight: bold;
+    -fx-text-fill: #f3ecd9;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.6), 8, 0.3, 0, 2);
+}
+
+.subtitle {
+    -fx-font-size: 15px;
+    -fx-text-fill: derive(#f3ecd9, -15%);
+    -fx-font-style: italic;
+}
+
+.card {
+    -fx-background-color: rgba(10, 31, 51, 0.55);
+    -fx-background-radius: 16;
+    -fx-border-color: rgba(232, 176, 75, 0.35);
+    -fx-border-radius: 16;
+    -fx-border-width: 1;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.45), 16, 0.15, 0, 4);
+}
+
+.section-label {
+    -fx-text-fill: #f3ecd9;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.text-field-dark {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: rgba(232, 176, 75, 0.4);
+    -fx-text-fill: #f3ecd9;
+    -fx-prompt-text-fill: rgba(243,236,217,0.55);
+    -fx-font-size: 14px;
+    -fx-padding: 8 12;
+}
+
+.text-field-dark:focused {
+    -fx-border-color: #e8b04b;
+}
+
+.error-label {
+    -fx-text-fill: #ff8a8a;
+    -fx-font-size: 12px;
+}
+
+.btn-primary {
+    -fx-background-color: linear-gradient(to bottom, #f0c169, #c8912f);
+    -fx-text-fill: #0a1f33;
+    -fx-font-size: 16px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 24;
+    -fx-padding: 12 36;
+    -fx-cursor: hand;
+    -fx-effect: dropshadow(gaussian, rgba(0,0,0,0.4), 8, 0.2, 0, 2);
+}
+
+.btn-primary:hover {
+    -fx-background-color: linear-gradient(to bottom, #f7cd82, #d9a03a);
+}
+
+.btn-secondary {
+    -fx-background-color: rgba(255,255,255,0.08);
+    -fx-text-fill: #f3ecd9;
+    -fx-font-size: 13px;
+    -fx-background-radius: 20;
+    -fx-border-radius: 20;
+    -fx-border-color: rgba(232, 176, 75, 0.5);
+    -fx-border-width: 1;
+    -fx-padding: 8 20;
+    -fx-cursor: hand;
+}
+
+.btn-secondary:hover {
+    -fx-background-color: rgba(232, 176, 75, 0.18);
+}
+
+.btn-icon-round {
+    -fx-background-radius: 25;
+    -fx-background-color: rgba(255,255,255,0.10);
+    -fx-padding: 0;
+    -fx-cursor: hand;
+}
+
+.btn-icon-round:hover {
+    -fx-background-color: rgba(232, 176, 75, 0.25);
+}
+
+.dialog-pane-ocean {
+    -fx-background-color: linear-gradient(to bottom, #0a1f33, #123a5c);
+}
+
+.label-light {
+    -fx-text-fill: #f3ecd9;
+}
+
+.hud-label {
+    -fx-text-fill: #f3ecd9;
+    -fx-font-weight: bold;
+}
+
+.hud-accent {
+    -fx-text-fill: #e8b04b;
+    -fx-font-weight: bold;
+}
+
+.progress-ocean > .bar {
+    -fx-background-color: linear-gradient(to right, #e8b04b, #c8912f);
+    -fx-background-radius: 6;
+}
+
+.progress-ocean > .track {
+    -fx-background-color: rgba(255,255,255,0.15);
+    -fx-background-radius: 6;
+}
+
+.text-area-ocean .content {
+    -fx-background-color: rgba(10, 31, 51, 0.85);
+}
+
+.text-area-ocean {
+    -fx-text-fill: #f3ecd9;
+    -fx-control-inner-background: transparent;
+    -fx-background-color: transparent;
+}
+
+.text-area-ocean .text {
+    -fx-fill: #f3ecd9;
+}

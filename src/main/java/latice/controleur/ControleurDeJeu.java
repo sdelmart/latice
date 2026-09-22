@@ -415,7 +415,7 @@ public class ControleurDeJeu {
             controleur.mettreMusique(musique);
             Stage stage = new Stage();
             stage.setTitle("Paramètres");
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_latice/img/parametre.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_Latice/img/parametre.png")));
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();

@@ -6,11 +6,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.media.MediaView?>
 
-<StackPane fx:id="rootPane" xmlns:fx="http://javafx.com/fxml/1" fx:controller="latice.controleur.ControleurFinDePartie">
+<StackPane fx:id="rootPane" xmlns:fx="http://javafx.com/fxml/1" fx:controller="latice.controleur.ControleurFinDePartie" styleClass="background-ocean" stylesheets="@../css/theme.css">
     <MediaView fx:id="mediaView" preserveRatio="false"/>
     <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40;">
-        <Label fx:id="labelTitre" text="Fin de la partie !" style="-fx-font-size: 28px; -fx-text-fill: white;"/>
-        <Label fx:id="labelResultat" text="Résultat" style="-fx-font-size: 20px; -fx-text-fill: white;"/>
-        <Button text="Fermer" onAction="#fermerFenetre" style="-fx-font-size: 16px;"/>
+        <Label fx:id="labelTitre" styleClass="title-latice" text="Fin de la partie !" style="-fx-font-size: 40px;"/>
+        <Label fx:id="labelResultat" styleClass="subtitle" text="Résultat"/>
+        <Button text="Fermer" onAction="#fermerFenetre" styleClass="btn-primary"/>
     </VBox>
 </StackPane>

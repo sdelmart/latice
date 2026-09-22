@@ -11,6 +11,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
@@ -26,10 +27,11 @@ public class ControleurAccueil {
     @FXML private TextField nomJoueur1;
     @FXML private TextField nomJoueur2;
     @FXML private Button boutonParametresAccueil;
+    @FXML private Label labelErreur;
 
     private Musique musique;
 
-    @FXML private Pane floatingPane; 
+    @FXML private Pane floatingPane;
 
     @FXML
     public void initialize() {
@@ -47,16 +49,16 @@ public class ControleurAccueil {
         };
 
         double[][] positions = {
-            {50, 20},
-            {350, 140},
-            {30, 320},
-            {320, 320},
-            {300, 5},
-            {40, 200},
-            {320, 200},
-            {110, 250},
-            {100, 140},
-            {260, 260}
+            {60, 40},
+            {800, 60},
+            {40, 560},
+            {800, 560},
+            {450, 30},
+            {60, 300},
+            {800, 300},
+            {150, 520},
+            {700, 520},
+            {450, 590}
         };
 
         for (int i = 0; i < images.length; i++) {
@@ -92,18 +94,39 @@ public class ControleurAccueil {
 
     @FXML
     private void validerJouerLatice(Event event) {
-        String joueur1 = nomJoueur1.getText();
-        String joueur2 = nomJoueur2.getText();
+        String joueur1 = nomJoueur1.getText().trim();
+        String joueur2 = nomJoueur2.getText().trim();
 
         if (joueur1.isEmpty() || joueur2.isEmpty()) {
-            System.out.println("Les noms des joueurs doivent être remplis !");
+            afficherErreur("Les deux pseudos doivent être renseignés.");
             return;
         }
+        if (joueur1.equalsIgnoreCase(joueur2)) {
+            afficherErreur("Les deux joueurs doivent avoir des pseudos différents.");
+            return;
+        }
+        masquerErreur();
 
         musique.arreterMusique();
         musique.jouerMusique("/musique/WaitMus.mp3");
 
         afficherEcranChargement((Stage) nomJoueur1.getScene().getWindow(), joueur1, joueur2);
+    }
+
+    private void afficherErreur(String message) {
+        labelErreur.setText(message);
+        labelErreur.setVisible(true);
+        labelErreur.setManaged(true);
+    }
+
+    private void masquerErreur() {
+        labelErreur.setVisible(false);
+        labelErreur.setManaged(false);
+    }
+
+    @FXML
+    private void ouvrirReglesAccueil() {
+        ControleurParametres.afficherRegles();
     }
 
     private void afficherEcranChargement(Stage primaryStage, String joueur1, String joueur2) {
@@ -124,7 +147,7 @@ public class ControleurAccueil {
             
             Scene scene = new Scene(root);
             primaryStage.setTitle("Chargement du jeu...");
-            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_latice/img/icone.png")));
+            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_Latice/img/icone.png")));
             primaryStage.setScene(scene);
             primaryStage.show();
             
@@ -155,7 +178,7 @@ public class ControleurAccueil {
 
         Scene scene = new Scene(root);
         primaryStage.setTitle("Latice - En cours");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_latice/img/icone.png")));
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_Latice/img/icone.png")));
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest(event -> musique.arreterMusique());
         primaryStage.setResizable(false);
@@ -174,7 +197,7 @@ public class ControleurAccueil {
             
             Stage stage = new Stage();
             stage.setTitle("Paramètres");
-            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_latice/img/parametre.png")));
+            stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_Latice/img/parametre.png")));
             stage.setScene(new Scene(root));
             stage.setResizable(false);
             stage.show();

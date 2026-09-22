@@ -1,14 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.layout.StackPane?>
 
-<StackPane xmlns="http://javafx.com/javafx/8.0.171" 
+<StackPane xmlns="http://javafx.com/javafx/8.0.171"
            xmlns:fx="http://javafx.com/fxml/1"
            fx:controller="latice.controleur.ControleurChargement"
-           style="-fx-background-color: #2b2b2b;">
-    
-    <ProgressBar fx:id="progressBar" progress="0" prefWidth="500" 
-                 style="-fx-accent: #4CAF50;"/>
-    
+           styleClass="background-ocean"
+           stylesheets="@../css/theme.css">
+
+    <VBox alignment="CENTER" spacing="16">
+        <padding>
+            <Insets bottom="0" left="60" right="60" top="0" />
+        </padding>
+        <Label styleClass="title-latice" text="LATICE" />
+        <Label styleClass="subtitle" text="Préparation de la partie..." />
+        <ProgressBar fx:id="progressBar" progress="0" prefWidth="420" styleClass="progress-ocean">
+            <VBox.margin>
+                <Insets top="10" />
+            </VBox.margin>
+        </ProgressBar>
+    </VBox>
+
 </StackPane>

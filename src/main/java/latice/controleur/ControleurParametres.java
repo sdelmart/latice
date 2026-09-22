@@ -1,10 +1,14 @@
 package latice.controleur;
 
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class ControleurParametres {
@@ -39,9 +43,14 @@ public class ControleurParametres {
     
     @FXML
     private void ouvrirRegles() {
+        afficherRegles();
+    }
+
+    public static void afficherRegles() {
         TextArea zoneRegles = new TextArea();
         zoneRegles.setWrapText(true);
         zoneRegles.setEditable(false);
+        zoneRegles.getStyleClass().add("text-area-ocean");
         zoneRegles.setText(
         	    "Règles du jeu Latice :\n\n"
         	    + "• Nombre de joueurs :\n"
@@ -69,15 +78,27 @@ public class ControleurParametres {
         	    + "  - Sinon, au bout de 10 cycles = 20 tours (1 cycle = 2 tours), le gagnant est celui qui aura posé le plus de tuiles sur le plateau.\n"
         	);
         
-        zoneRegles.setPrefSize(400, 300);
+        zoneRegles.setPrefSize(440, 320);
         ScrollPane scrollPane = new ScrollPane(zoneRegles);
         scrollPane.setFitToWidth(true);
         scrollPane.setFitToHeight(true);
 
-        Scene scene = new Scene(scrollPane);
         Stage reglesStage = new Stage();
+        Button boutonFermer = new Button("Fermer");
+        boutonFermer.getStyleClass().add("btn-secondary");
+        boutonFermer.setOnAction(e -> reglesStage.close());
+
+        VBox racine = new VBox(14, scrollPane, boutonFermer);
+        racine.setAlignment(javafx.geometry.Pos.CENTER);
+        racine.setPadding(new Insets(20));
+        racine.getStyleClass().add("background-ocean");
+
+        Scene scene = new Scene(racine);
+        scene.getStylesheets().add(ControleurParametres.class.getResource("/css/theme.css").toExternalForm());
         reglesStage.setTitle("Règles du jeu");
+        reglesStage.getIcons().add(new Image(ControleurParametres.class.getResourceAsStream("/images/img_Latice/img/icone.png")));
         reglesStage.setScene(scene);
+        reglesStage.setResizable(false);
         reglesStage.show();
     }
 
