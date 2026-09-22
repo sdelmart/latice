@@ -20,6 +20,7 @@ import latice.metier.Plateau;
 import latice.metier.Position;
 import latice.metier.Tuile;
 import latice.metier.Arbitre;
+import latice.metier.HistoriqueParties;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -129,6 +130,11 @@ public class ControleurDeJeu {
         labelJoueur2.setText(nomJoueur2);
     }
 
+    public void definirCouleursJoueurs(latice.enumeration.Couleur couleur1, latice.enumeration.Couleur couleur2) {
+        labelJoueur1.setStyle(labelJoueur1.getStyle() + " -fx-text-fill: " + CouleurUI.hex(couleur1) + ";");
+        labelJoueur2.setStyle(labelJoueur2.getStyle() + " -fx-text-fill: " + CouleurUI.hex(couleur2) + ";");
+    }
+
     public void initialiserRackJoueurs(Joueur joueur1, Joueur joueur2) {
         this.joueur1 = joueur1;
         this.joueur2 = joueur2;
@@ -213,6 +219,7 @@ public class ControleurDeJeu {
                 }
 
                 if (cellulesPlacement.getOrDefault(pos, 0) < 1) {
+                    EffetsSonores.jouer(EffetsSonores.Effet.POSE_TUILE);
                     ImageView imageView = new ImageView(dragboard.getImage());
                     imageView.setFitWidth(67);
                     imageView.setFitHeight(67);
@@ -319,6 +326,7 @@ public class ControleurDeJeu {
 
     @FXML
     private void actionEchanger(ActionEvent event) {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         Joueur joueurActuel = arbitre.joueurCourant();
         GridPane rackActuel = joueurActuel == joueur1 ? rack1 : rack2;
         if (joueurActuel.pioche() == null) {
@@ -343,6 +351,7 @@ public class ControleurDeJeu {
 
     @FXML
     private void actionPasse(ActionEvent event) {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         if (arbitre == null) {
             System.err.println("Erreur: Arbitre est non initialisé");
             return;
@@ -359,6 +368,7 @@ public class ControleurDeJeu {
 
     @FXML
     private void actionJouer(ActionEvent event) {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         if (arbitre == null) {
             System.err.println("Erreur: Arbitre est non initialisé");
             return;
@@ -387,13 +397,18 @@ public class ControleurDeJeu {
         Joueur joueurCourant = arbitre != null ? arbitre.joueurCourant() : null;
         if (toursRestantsJoueur1.get() == 0 && toursRestantsJoueur2.get() == 0) {
             String messageFin;
+            String vainqueur;
             if (tuilesPoseesJoueur1 > tuilesPoseesJoueur2) {
                 messageFin = joueur1.nom() + " a gagné avec " + tuilesPoseesJoueur1 + " tuiles posées.";
+                vainqueur = joueur1.nom();
             } else if (tuilesPoseesJoueur2 > tuilesPoseesJoueur1) {
                 messageFin = joueur2.nom() + " a gagné avec " + tuilesPoseesJoueur2 + " tuiles posées.";
+                vainqueur = joueur2.nom();
             } else {
                 messageFin = "Egalité : " + tuilesPoseesJoueur1 + " tuiles posées chacun.";
+                vainqueur = "Égalité";
             }
+            HistoriqueParties.enregistrer(joueur1.nom(), joueur1.points(), joueur2.nom(), joueur2.points(), vainqueur);
             afficherFinDePartie(messageFin);
             Stage stage = (Stage) labelTourActuel.getScene().getWindow();
             stage.close();
@@ -416,6 +431,7 @@ public class ControleurDeJeu {
 
     @FXML
     private void ouvrirParametresLatice() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ihm/Parametre.fxml"));
             Parent root = fxmlLoader.load();
@@ -434,6 +450,7 @@ public class ControleurDeJeu {
 
     @FXML
     private void actionAcheter(ActionEvent event) {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         Joueur joueurActuel = arbitre.joueurCourant();
         if (joueurActuel.points() < 2) {
             System.out.println("Vous n'avez pas assez de points pour acheter une action supplementaire!");

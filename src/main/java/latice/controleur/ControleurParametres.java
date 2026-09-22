@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
@@ -23,6 +24,8 @@ public class ControleurParametres {
     private ComboBox<FondEcran> choixFond;
     @FXML
     private Region fondRegion;
+    @FXML
+    private CheckBox caseEffetsSonores;
 
     private Musique musique;
 
@@ -45,6 +48,9 @@ public class ControleurParametres {
                 ThemeVisuel.definirFond(nouveauFond);
             }
         });
+
+        caseEffetsSonores.setSelected(EffetsSonores.sontActifs());
+        caseEffetsSonores.selectedProperty().addListener((obs, oldVal, actif) -> EffetsSonores.definirActifs(actif));
 
         if (musique != null && sliderVolume != null) {
             definirControles();

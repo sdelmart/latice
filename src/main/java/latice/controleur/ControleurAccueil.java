@@ -1,44 +1,78 @@
 package latice.controleur;
 
 import java.io.IOException;
+import java.util.prefs.Preferences;
 
-import javafx.fxml.FXML;
-import javafx.scene.image.ImageView;
-import javafx.util.Duration;
+import javafx.animation.FadeTransition;
+import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
 import javafx.event.Event;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
-import javafx.stage.Stage;
-import latice.metier.Arbitre;
-import latice.metier.Joueur;
-import latice.metier.Plateau;
-import javafx.animation.ScaleTransition;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
+import javafx.stage.Stage;
+import javafx.util.Duration;
+import latice.enumeration.Couleur;
+import latice.metier.Arbitre;
+import latice.metier.HistoriqueParties;
+import latice.metier.Joueur;
+import latice.metier.Plateau;
 
 public class ControleurAccueil {
+
+    private static final Preferences PREFS = Preferences.userNodeForPackage(ControleurAccueil.class);
+    private static final String CLE_PSEUDO1 = "dernier_pseudo1";
+    private static final String CLE_PSEUDO2 = "dernier_pseudo2";
+    private static final String CLE_COULEUR1 = "derniere_couleur1";
+    private static final String CLE_COULEUR2 = "derniere_couleur2";
 
     @FXML private TextField nomJoueur1;
     @FXML private TextField nomJoueur2;
     @FXML private Button boutonParametresAccueil;
     @FXML private Label labelErreur;
     @FXML private Region fondRegion;
+    @FXML private Pane floatingPane;
+    @FXML private HBox swatchesJoueur1;
+    @FXML private HBox swatchesJoueur2;
+    @FXML private ListView<String> listeHistorique;
+
+    @FXML private Region panneauMenu;
+    @FXML private Region panneauNouvellePartie;
+    @FXML private Region panneauProfils;
+    @FXML private Region panneauCredits;
 
     private Musique musique;
-
-    @FXML private Pane floatingPane;
+    private Couleur couleurJoueur1;
+    private Couleur couleurJoueur2;
 
     @FXML
     public void initialize() {
         ThemeVisuel.lierFond(fondRegion);
+        creerDecorationsFlottantes();
 
+        couleurJoueur1 = lireCouleurSauvegardee(CLE_COULEUR1, Couleur.BLEU);
+        couleurJoueur2 = lireCouleurSauvegardee(CLE_COULEUR2, Couleur.ROUGE);
+        remplirSwatches(swatchesJoueur1, couleurJoueur1, c -> couleurJoueur1 = c);
+        remplirSwatches(swatchesJoueur2, couleurJoueur2, c -> couleurJoueur2 = c);
+
+        nomJoueur1.setText(PREFS.get(CLE_PSEUDO1, ""));
+        nomJoueur2.setText(PREFS.get(CLE_PSEUDO2, ""));
+
+        listeHistorique.setPlaceholder(new Label("Aucune partie jouée pour l'instant."));
+    }
+
+    private void creerDecorationsFlottantes() {
         // Décorations discrètes, cantonnées aux bords gauche/droite pour ne jamais recouvrir la carte centrale.
         String[] images = {
             "/images/img_Latice/img/FLEUR_BLEU.png",
@@ -84,12 +118,91 @@ public class ControleurAccueil {
         }
     }
 
+    private Couleur lireCouleurSauvegardee(String cle, Couleur parDefaut) {
+        try {
+            return Couleur.valueOf(PREFS.get(cle, parDefaut.name()));
+        } catch (IllegalArgumentException e) {
+            return parDefaut;
+        }
+    }
+
+    private void remplirSwatches(HBox conteneur, Couleur selection, java.util.function.Consumer<Couleur> onChoix) {
+        for (Couleur couleur : Couleur.values()) {
+            Button pastille = new Button();
+            pastille.getStyleClass().add("swatch");
+            pastille.setStyle("-fx-background-color: " + CouleurUI.hex(couleur) + ";");
+            if (couleur == selection) {
+                pastille.getStyleClass().add("swatch-selectionne");
+            }
+            pastille.setOnAction(e -> {
+                EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
+                onChoix.accept(couleur);
+                for (javafx.scene.Node n : conteneur.getChildren()) {
+                    n.getStyleClass().remove("swatch-selectionne");
+                }
+                pastille.getStyleClass().add("swatch-selectionne");
+            });
+            conteneur.getChildren().add(pastille);
+        }
+    }
+
     public void mettreMusique(Musique musique) {
         this.musique = musique;
     }
 
+    // --- Navigation entre panneaux -------------------------------------------------
+
+    @FXML
+    private void afficherPanneauMenu() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
+        basculerVers(panneauMenu);
+    }
+
+    @FXML
+    private void afficherPanneauNouvellePartie() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
+        basculerVers(panneauNouvellePartie);
+    }
+
+    @FXML
+    private void afficherPanneauProfils() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
+        listeHistorique.getItems().setAll(
+                HistoriqueParties.chargerHistorique().stream().map(HistoriqueParties.Partie::resume).toList());
+        basculerVers(panneauProfils);
+    }
+
+    @FXML
+    private void afficherPanneauCredits() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
+        basculerVers(panneauCredits);
+    }
+
+    private void basculerVers(Region panneauCible) {
+        for (Region panneau : new Region[] {panneauMenu, panneauNouvellePartie, panneauProfils, panneauCredits}) {
+            if (panneau != panneauCible && panneau.isVisible()) {
+                FadeTransition sortie = new FadeTransition(Duration.millis(160), panneau);
+                sortie.setToValue(0);
+                sortie.setOnFinished(e -> {
+                    panneau.setVisible(false);
+                    panneau.setManaged(false);
+                });
+                sortie.play();
+            }
+        }
+        panneauCible.setOpacity(0);
+        panneauCible.setVisible(true);
+        panneauCible.setManaged(true);
+        FadeTransition entree = new FadeTransition(Duration.millis(220), panneauCible);
+        entree.setToValue(1);
+        entree.play();
+    }
+
+    // --- Nouvelle partie -------------------------------------------------------------
+
     @FXML
     private void validerJouerLatice(Event event) {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         String joueur1 = nomJoueur1.getText().trim();
         String joueur2 = nomJoueur2.getText().trim();
 
@@ -102,6 +215,11 @@ public class ControleurAccueil {
             return;
         }
         masquerErreur();
+
+        PREFS.put(CLE_PSEUDO1, joueur1);
+        PREFS.put(CLE_PSEUDO2, joueur2);
+        PREFS.put(CLE_COULEUR1, couleurJoueur1.name());
+        PREFS.put(CLE_COULEUR2, couleurJoueur2.name());
 
         afficherEcranChargement((Stage) nomJoueur1.getScene().getWindow(), joueur1, joueur2);
     }
@@ -119,6 +237,7 @@ public class ControleurAccueil {
 
     @FXML
     private void ouvrirReglesAccueil() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         ControleurParametres.afficherRegles();
     }
 
@@ -126,24 +245,24 @@ public class ControleurAccueil {
         try {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/ihm/Chargement.fxml"));
             Parent root = loader.load();
-            
+
             ControleurChargement controleurChargement = loader.getController();
-            
+
             controleurChargement.mettreSurChargementTermine(() -> {
                 try {
                     chargerPlateauDeJeu(primaryStage, joueur1, joueur2);
-                    
+
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
             });
-            
+
             Scene scene = new Scene(root);
             primaryStage.setTitle("Chargement du jeu...");
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_Latice/img/icone.png")));
             primaryStage.setScene(scene);
             primaryStage.show();
-            
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -154,14 +273,15 @@ public class ControleurAccueil {
         Parent root = loader.load();
 
         ControleurDeJeu controleurDeJeu = loader.getController();
-        
+
         controleurDeJeu.mettreMusique(musique);
         Joueur joueurN1 = new Joueur(joueur1);
         Joueur joueurN2 = new Joueur(joueur2);
         Arbitre arbitre = new Arbitre(joueurN1, joueurN2);
         controleurDeJeu.setArbitre(arbitre);
         controleurDeJeu.nomsJoueurs(joueur1, joueur2);
-        
+        controleurDeJeu.definirCouleursJoueurs(couleurJoueur1, couleurJoueur2);
+
         Plateau plateau = new Plateau(9);
         controleurDeJeu.initialiserPlateau(plateau);
 		controleurDeJeu.initialiserRackJoueurs(joueurN1, joueurN2);
@@ -180,14 +300,15 @@ public class ControleurAccueil {
 
     @FXML
     private void ouvrirParametresAccueil() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         try {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/ihm/Parametre.fxml"));
             Parent root = fxmlLoader.load();
 
             ControleurParametres controleurParametres = fxmlLoader.getController();
-            
+
             controleurParametres.mettreMusique(musique);
-            
+
             Stage stage = new Stage();
             stage.setTitle("Paramètres");
             stage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_Latice/img/parametre.png")));
@@ -199,7 +320,7 @@ public class ControleurAccueil {
             e.printStackTrace();
         }
     }
-    
+
     @FXML
     private void quitterApplication() {
         Platform.exit();

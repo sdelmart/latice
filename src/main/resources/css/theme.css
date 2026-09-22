@@ -28,8 +28,101 @@
     -fx-background-color: linear-gradient(to bottom right, #16233b, #4a3a55 55%, #c8912f);
 }
 
+.background-photo-etoile {
+    -fx-background-color: #0a1f33;
+    -fx-background-image: url('/images/fonds/etoile_cote.jpg');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
+.background-photo-palmiers {
+    -fx-background-color: #0a1f33;
+    -fx-background-image: url('/images/fonds/palmiers_etoiles.jpg');
+    -fx-background-size: cover;
+    -fx-background-position: center;
+}
+
 .scrim {
     -fx-background-color: rgba(4, 11, 20, 0.42);
+}
+
+/* Menu principal façon jeu vidéo */
+.btn-menu {
+    -fx-background-color: rgba(255,255,255,0.06);
+    -fx-text-fill: #f3ecd9;
+    -fx-font-size: 20px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-border-color: transparent;
+    -fx-border-width: 0 0 0 4;
+    -fx-padding: 12 28;
+    -fx-cursor: hand;
+    -fx-alignment: CENTER_LEFT;
+    -fx-min-width: 260px;
+}
+
+.btn-menu:hover {
+    -fx-background-color: rgba(232, 176, 75, 0.16);
+    -fx-border-color: #e8b04b;
+    -fx-text-fill: #ffe8b0;
+}
+
+.btn-menu-quitter {
+    -fx-text-fill: rgba(243,236,217,0.6);
+    -fx-font-size: 15px;
+    -fx-font-weight: normal;
+}
+
+.btn-menu-quitter:hover {
+    -fx-text-fill: #ff8a8a;
+    -fx-border-color: #ff8a8a;
+    -fx-background-color: rgba(255,138,138,0.12);
+}
+
+.panel-title {
+    -fx-text-fill: #f3ecd9;
+    -fx-font-size: 26px;
+    -fx-font-weight: bold;
+    -fx-font-family: "Georgia", serif;
+}
+
+.swatch {
+    -fx-background-radius: 50%;
+    -fx-min-width: 28px;
+    -fx-min-height: 28px;
+    -fx-max-width: 28px;
+    -fx-max-height: 28px;
+    -fx-border-radius: 50%;
+    -fx-border-width: 2;
+    -fx-border-color: transparent;
+    -fx-cursor: hand;
+}
+
+.swatch-selectionne {
+    -fx-border-color: #f3ecd9;
+}
+
+.list-view-ocean {
+    -fx-background-color: rgba(10, 31, 51, 0.55);
+    -fx-background-radius: 12;
+    -fx-border-color: rgba(232, 176, 75, 0.3);
+    -fx-border-radius: 12;
+}
+
+.list-view-ocean .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #f3ecd9;
+    -fx-padding: 10 14;
+    -fx-border-color: transparent transparent rgba(255,255,255,0.08) transparent;
+}
+
+.list-view-ocean .list-cell:empty {
+    -fx-border-color: transparent;
+}
+
+.list-view-ocean .placeholder .label {
+    -fx-text-fill: rgba(243,236,217,0.6);
 }
 
 .title-latice {

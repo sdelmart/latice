@@ -3,6 +3,7 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
@@ -16,60 +17,118 @@
       <Region fx:id="fondRegion" maxHeight="Infinity" maxWidth="Infinity" />
       <Region maxHeight="Infinity" maxWidth="Infinity" styleClass="scrim" />
       <Pane fx:id="floatingPane" maxHeight="650.0" maxWidth="900.0" mouseTransparent="true" prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: transparent;" />
-      <BorderPane maxHeight="650.0" maxWidth="900.0" prefHeight="650.0" prefWidth="900.0">
-         <top>
-            <VBox alignment="CENTER" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets top="55.0" />
-               </BorderPane.margin>
-               <children>
-                  <Label styleClass="title-latice" text="LATICE" />
-                  <Label styleClass="subtitle" text="Un jeu de tuiles, de stratégie et de mer">
-                     <VBox.margin>
-                        <Insets top="4.0" />
-                     </VBox.margin>
-                  </Label>
-               </children>
-            </VBox>
-         </top>
-         <center>
-            <VBox alignment="CENTER" maxWidth="380.0" spacing="16.0" styleClass="card" BorderPane.alignment="CENTER">
-               <padding>
-                  <Insets bottom="28.0" left="32.0" right="32.0" top="24.0" />
-               </padding>
-               <children>
-                  <Label styleClass="section-label" text="NOUVELLE PARTIE" />
-                  <VBox spacing="10.0">
+
+      <StackPane fx:id="conteneurPanneaux" maxHeight="650.0" maxWidth="900.0" prefHeight="650.0" prefWidth="900.0">
+         <children>
+
+            <!-- Écran-titre / menu principal -->
+            <BorderPane fx:id="panneauMenu" maxHeight="650.0" maxWidth="900.0">
+               <top>
+                  <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+                     <BorderPane.margin>
+                        <Insets top="70.0" />
+                     </BorderPane.margin>
                      <children>
-                        <TextField fx:id="nomJoueur1" promptText="Nom du Joueur 1" styleClass="text-field-dark" />
-                        <TextField fx:id="nomJoueur2" promptText="Nom du Joueur 2" styleClass="text-field-dark" />
+                        <Label styleClass="title-latice" text="LATICE" />
+                        <Label styleClass="subtitle" text="Un jeu de tuiles, de stratégie et de mer">
+                           <VBox.margin>
+                              <Insets top="4.0" />
+                           </VBox.margin>
+                        </Label>
                      </children>
                   </VBox>
-                  <Label fx:id="labelErreur" managed="false" styleClass="error-label" text="Les deux pseudos doivent être renseignés." visible="false" />
-                  <Button onAction="#validerJouerLatice" styleClass="btn-primary" text="JOUER">
-                     <VBox.margin>
-                        <Insets top="6.0" />
-                     </VBox.margin>
-                  </Button>
-               </children>
-            </VBox>
-         </center>
-         <bottom>
-            <VBox alignment="CENTER" spacing="14.0" BorderPane.alignment="CENTER">
-               <BorderPane.margin>
-                  <Insets bottom="36.0" top="20.0" />
-               </BorderPane.margin>
-               <children>
-                  <HBox alignment="CENTER" spacing="14.0">
+               </top>
+               <center>
+                  <VBox alignment="CENTER" spacing="14.0" BorderPane.alignment="CENTER">
                      <children>
-                        <Button onAction="#ouvrirReglesAccueil" styleClass="btn-secondary" text="Règles du jeu" />
-                        <Button fx:id="boutonParametresAccueil" onAction="#ouvrirParametresAccueil" styleClass="btn-secondary" text="Paramètres" />
-                        <Button onAction="#quitterApplication" styleClass="btn-secondary" text="Quitter" />
+                        <Button onAction="#afficherPanneauNouvellePartie" styleClass="btn-menu" text="JOUER" />
+                        <Button onAction="#afficherPanneauProfils" styleClass="btn-menu" text="PROFILS" />
+                        <Button onAction="#ouvrirReglesAccueil" styleClass="btn-menu" text="RÈGLES DU JEU" />
+                        <Button fx:id="boutonParametresAccueil" onAction="#ouvrirParametresAccueil" styleClass="btn-menu" text="PARAMÈTRES" />
+                        <Button onAction="#afficherPanneauCredits" styleClass="btn-menu" text="CRÉDITS" />
+                        <Button onAction="#quitterApplication" styleClass="btn-menu, btn-menu-quitter" text="Quitter">
+                           <VBox.margin>
+                              <Insets top="10.0" />
+                           </VBox.margin>
+                        </Button>
                      </children>
-                  </HBox>
+                  </VBox>
+               </center>
+               <bottom>
+                  <Region prefHeight="40.0" BorderPane.alignment="CENTER" />
+               </bottom>
+            </BorderPane>
+
+            <!-- Nouvelle partie -->
+            <VBox fx:id="panneauNouvellePartie" alignment="CENTER" maxHeight="650.0" maxWidth="900.0" spacing="20.0" visible="false">
+               <children>
+                  <Label styleClass="panel-title" text="NOUVELLE PARTIE" />
+                  <VBox alignment="CENTER" maxWidth="420.0" spacing="18.0" styleClass="card">
+                     <padding>
+                        <Insets bottom="28.0" left="32.0" right="32.0" top="26.0" />
+                     </padding>
+                     <children>
+                        <VBox spacing="8.0">
+                           <children>
+                              <TextField fx:id="nomJoueur1" promptText="Nom du Joueur 1" styleClass="text-field-dark" />
+                              <HBox fx:id="swatchesJoueur1" alignment="CENTER" spacing="8.0">
+                                 <VBox.margin>
+                                    <Insets top="2.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <VBox spacing="8.0">
+                           <children>
+                              <TextField fx:id="nomJoueur2" promptText="Nom du Joueur 2" styleClass="text-field-dark" />
+                              <HBox fx:id="swatchesJoueur2" alignment="CENTER" spacing="8.0">
+                                 <VBox.margin>
+                                    <Insets top="2.0" />
+                                 </VBox.margin>
+                              </HBox>
+                           </children>
+                        </VBox>
+                        <Label fx:id="labelErreur" managed="false" styleClass="error-label" text="Les deux pseudos doivent être renseignés." visible="false" />
+                        <Button onAction="#validerJouerLatice" styleClass="btn-primary" text="LANCER LA PARTIE" />
+                     </children>
+                  </VBox>
+                  <Button onAction="#afficherPanneauMenu" styleClass="btn-secondary" text="← Retour" />
                </children>
             </VBox>
-         </bottom>
-      </BorderPane>
+
+            <!-- Profils / historique -->
+            <VBox fx:id="panneauProfils" alignment="CENTER" maxHeight="650.0" maxWidth="900.0" spacing="18.0" visible="false">
+               <children>
+                  <Label styleClass="panel-title" text="HISTORIQUE DES PARTIES" />
+                  <ListView fx:id="listeHistorique" maxHeight="420.0" maxWidth="560.0" prefHeight="420.0" prefWidth="560.0" styleClass="list-view-ocean" />
+                  <Button onAction="#afficherPanneauMenu" styleClass="btn-secondary" text="← Retour" />
+               </children>
+            </VBox>
+
+            <!-- Crédits -->
+            <VBox fx:id="panneauCredits" alignment="CENTER" maxHeight="650.0" maxWidth="900.0" spacing="14.0" visible="false">
+               <children>
+                  <Label styleClass="panel-title" text="CRÉDITS" />
+                  <VBox alignment="CENTER" maxWidth="480.0" spacing="10.0" styleClass="card">
+                     <padding>
+                        <Insets bottom="28.0" left="32.0" right="32.0" top="26.0" />
+                     </padding>
+                     <children>
+                        <Label styleClass="label-light" text="Projet Latice" style="-fx-font-size: 18px; -fx-font-weight: bold;" />
+                        <Label styleClass="subtitle" text="SAE 1ère année — BUT Informatique" wrapText="true" />
+                        <Label styleClass="label-light" text="Technologies : Java, JavaFX, Maven" wrapText="true">
+                           <VBox.margin>
+                              <Insets top="12.0" />
+                           </VBox.margin>
+                        </Label>
+                        <Label styleClass="label-light" text="Images : Pexels (licence libre) — Sons : Mixkit (licence libre)" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <Button onAction="#afficherPanneauMenu" styleClass="btn-secondary" text="← Retour" />
+               </children>
+            </VBox>
+
+         </children>
+      </StackPane>
    </children>
 </StackPane>

@@ -9,7 +9,9 @@ public enum FondEcran {
     ARDOISE("background-ardoise", "Minimaliste"),
     PROFOND("background-profond", "Bleu abyssal"),
     AUBE("background-aube", "Aube dorée"),
-    ETOILE("background-ocean", "Nuit étoilée");
+    ETOILE("background-ocean", "Nuit étoilée (illustration)"),
+    PHOTO_ETOILE("background-photo-etoile", "Ciel étoilé sur la côte"),
+    PHOTO_PALMIERS("background-photo-palmiers", "Palmiers sous les étoiles");
 
     private final String classeCss;
     private final String nomAffiche;
