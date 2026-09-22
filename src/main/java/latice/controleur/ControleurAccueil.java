@@ -107,9 +107,6 @@ public class ControleurAccueil {
         }
         masquerErreur();
 
-        musique.arreterMusique();
-        musique.jouerMusique("/musique/WaitMus.mp3");
-
         afficherEcranChargement((Stage) nomJoueur1.getScene().getWindow(), joueur1, joueur2);
     }
 

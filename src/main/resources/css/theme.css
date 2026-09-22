@@ -60,6 +60,34 @@
     -fx-border-color: #e8b04b;
 }
 
+.combo-box {
+    -fx-background-color: rgba(255,255,255,0.12);
+    -fx-background-radius: 8;
+    -fx-border-radius: 8;
+    -fx-border-color: rgba(232, 176, 75, 0.4);
+    -fx-mark-color: #f3ecd9;
+}
+
+.combo-box .list-cell {
+    -fx-text-fill: #f3ecd9;
+    -fx-background-color: transparent;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: #123a5c;
+    -fx-border-color: rgba(232, 176, 75, 0.4);
+}
+
+.combo-box-popup .list-cell {
+    -fx-text-fill: #f3ecd9;
+    -fx-background-color: transparent;
+    -fx-padding: 6 10;
+}
+
+.combo-box-popup .list-cell:hover, .combo-box-popup .list-cell:filled:hover {
+    -fx-background-color: rgba(232, 176, 75, 0.25);
+}
+
 .error-label {
     -fx-text-fill: #ff8a8a;
     -fx-font-size: 12px;

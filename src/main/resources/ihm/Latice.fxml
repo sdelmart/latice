@@ -10,6 +10,7 @@
 <?import javafx.scene.layout.GridPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
@@ -602,13 +603,17 @@
       </HBox>
    </right>
    <bottom>
-      <Pane maxWidth="500.0" prefHeight="38.0" prefWidth="500.0" BorderPane.alignment="CENTER">
+      <HBox alignment="CENTER" maxWidth="1000.0" prefHeight="86.0" prefWidth="1000.0" spacing="18.0" BorderPane.alignment="CENTER">
+         <padding>
+            <Insets bottom="18.0" top="8.0" />
+         </padding>
          <children>
-            <Button fx:id="btnEchange" layoutX="283.0" layoutY="-13.0" mnemonicParsing="false" onAction="#actionEchanger" styleClass="btn-secondary" text="ECHANGER" />
-            <Button fx:id="btnPasse" layoutX="166.0" layoutY="-12.0" mnemonicParsing="false" onAction="#actionPasse" styleClass="btn-secondary" text="PASSE" />
-            <Button fx:id="btnAcheter" layoutX="57.0" layoutY="-12.0" mnemonicParsing="false" onAction="#actionAcheter" styleClass="btn-secondary" text="ACHETER" />
-            <Button fx:id="btnJouer" layoutX="387.0" layoutY="-13.0" mnemonicParsing="false" onAction="#actionJouer" styleClass="btn-primary" text="J'AI JOUÉ" />
-            <Button fx:id="btnParametresLatice" layoutX="-25.0" layoutY="-24.0" maxHeight="50" maxWidth="50" minHeight="50" minWidth="50" onAction="#ouvrirParametresLatice" prefHeight="50" prefWidth="50" styleClass="btn-icon-round">
+            <Button fx:id="btnAcheter" minWidth="130.0" mnemonicParsing="false" onAction="#actionAcheter" styleClass="btn-secondary" text="ACHETER" />
+            <Button fx:id="btnPasse" minWidth="130.0" mnemonicParsing="false" onAction="#actionPasse" styleClass="btn-secondary" text="PASSE" />
+            <Button fx:id="btnEchange" minWidth="130.0" mnemonicParsing="false" onAction="#actionEchanger" styleClass="btn-secondary" text="ÉCHANGER" />
+            <Button fx:id="btnJouer" minWidth="150.0" mnemonicParsing="false" onAction="#actionJouer" styleClass="btn-primary" text="J'AI JOUÉ" />
+            <Region HBox.hgrow="ALWAYS" />
+            <Button fx:id="btnParametresLatice" maxHeight="50" maxWidth="50" minHeight="50" minWidth="50" onAction="#ouvrirParametresLatice" prefHeight="50" prefWidth="50" styleClass="btn-icon-round">
 	    <graphic>
 	        <ImageView fitHeight="50" fitWidth="50">
 	            <image>
@@ -616,8 +621,11 @@
 	            </image>
 	        </ImageView>
 	    </graphic>
+            <HBox.margin>
+               <Insets right="20.0" />
+            </HBox.margin>
 	</Button>
          </children>
-      </Pane>
+      </HBox>
    </bottom>
 </BorderPane>

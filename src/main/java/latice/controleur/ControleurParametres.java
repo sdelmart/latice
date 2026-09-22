@@ -4,6 +4,7 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
@@ -15,32 +16,42 @@ public class ControleurParametres {
 
 	@FXML
     private Slider sliderVolume;
+    @FXML
+    private ComboBox<PisteMusicale> choixMusique;
 
     private Musique musique;
-    
+
     public void mettreMusique(Musique musique) {
         this.musique = musique;
         if (sliderVolume != null && musique != null) {
-            definirSlider();
+            definirControles();
         }
     }
 
     @FXML
     private void initialize() {
+        choixMusique.getItems().setAll(PisteMusicale.values());
         if (musique != null && sliderVolume != null) {
-            definirSlider();
+            definirControles();
         }
     }
 
-    private void definirSlider() {
+    private void definirControles() {
         sliderVolume.setValue(musique.recupereVolume());
         sliderVolume.valueProperty().addListener((obs, oldVal, newVal) -> {
             if (this.musique != null) {
                 this.musique.definirVolume(newVal.doubleValue());
             }
         });
+
+        choixMusique.setValue(musique.pisteActuelle());
+        choixMusique.valueProperty().addListener((obs, oldVal, nouvellePiste) -> {
+            if (this.musique != null && nouvellePiste != null) {
+                this.musique.changerPiste(nouvellePiste);
+            }
+        });
     }
-    
+
     @FXML
     private void ouvrirRegles() {
         afficherRegles();
