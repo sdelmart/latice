@@ -68,6 +68,12 @@
                         <Insets bottom="28.0" left="32.0" right="32.0" top="26.0" />
                      </padding>
                      <children>
+                        <HBox alignment="CENTER" spacing="10.0">
+                           <children>
+                              <Button fx:id="boutonMode2Joueurs" onAction="#choisirMode2Joueurs" styleClass="btn-secondary, swatch-selectionne" text="2 joueurs" />
+                              <Button fx:id="boutonModeSolo" onAction="#choisirModeSolo" styleClass="btn-secondary" text="Solo (vs IA)" />
+                           </children>
+                        </HBox>
                         <VBox spacing="8.0">
                            <children>
                               <TextField fx:id="nomJoueur1" promptText="Nom du Joueur 1" styleClass="text-field-dark" />
@@ -78,7 +84,7 @@
                               </HBox>
                            </children>
                         </VBox>
-                        <VBox spacing="8.0">
+                        <VBox fx:id="blocJoueur2" spacing="8.0">
                            <children>
                               <TextField fx:id="nomJoueur2" promptText="Nom du Joueur 2" styleClass="text-field-dark" />
                               <HBox fx:id="swatchesJoueur2" alignment="CENTER" spacing="8.0">

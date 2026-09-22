@@ -125,6 +125,11 @@
     -fx-text-fill: rgba(243,236,217,0.6);
 }
 
+.case-valide {
+    -fx-effect: dropshadow(gaussian, #e8b04b, 14, 0.75, 0, 0);
+    -fx-opacity: 0.92;
+}
+
 .title-latice {
     -fx-font-family: "Georgia", serif;
     -fx-font-size: 64px;

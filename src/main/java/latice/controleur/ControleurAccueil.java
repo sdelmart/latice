@@ -20,14 +20,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.Region;
+import javafx.scene.layout.VBox;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import latice.enumeration.Couleur;
-import latice.metier.Arbitre;
 import latice.metier.HistoriqueParties;
-import latice.metier.Joueur;
-import latice.metier.Plateau;
 
 public class ControleurAccueil {
 
@@ -46,6 +44,9 @@ public class ControleurAccueil {
     @FXML private HBox swatchesJoueur1;
     @FXML private HBox swatchesJoueur2;
     @FXML private ListView<String> listeHistorique;
+    @FXML private Button boutonMode2Joueurs;
+    @FXML private Button boutonModeSolo;
+    @FXML private VBox blocJoueur2;
 
     @FXML private Region panneauMenu;
     @FXML private Region panneauNouvellePartie;
@@ -55,6 +56,7 @@ public class ControleurAccueil {
     private Musique musique;
     private Couleur couleurJoueur1;
     private Couleur couleurJoueur2;
+    private boolean modeSolo = false;
 
     @FXML
     public void initialize() {
@@ -150,6 +152,28 @@ public class ControleurAccueil {
         this.musique = musique;
     }
 
+    // --- Mode de jeu -------------------------------------------------------------------
+
+    @FXML
+    private void choisirMode2Joueurs() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
+        modeSolo = false;
+        blocJoueur2.setVisible(true);
+        blocJoueur2.setManaged(true);
+        boutonMode2Joueurs.getStyleClass().add("swatch-selectionne");
+        boutonModeSolo.getStyleClass().remove("swatch-selectionne");
+    }
+
+    @FXML
+    private void choisirModeSolo() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
+        modeSolo = true;
+        blocJoueur2.setVisible(false);
+        blocJoueur2.setManaged(false);
+        boutonModeSolo.getStyleClass().add("swatch-selectionne");
+        boutonMode2Joueurs.getStyleClass().remove("swatch-selectionne");
+    }
+
     // --- Navigation entre panneaux -------------------------------------------------
 
     @FXML
@@ -204,22 +228,24 @@ public class ControleurAccueil {
     private void validerJouerLatice(Event event) {
         EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         String joueur1 = nomJoueur1.getText().trim();
-        String joueur2 = nomJoueur2.getText().trim();
+        String joueur2 = modeSolo ? "IA" : nomJoueur2.getText().trim();
 
-        if (joueur1.isEmpty() || joueur2.isEmpty()) {
-            afficherErreur("Les deux pseudos doivent être renseignés.");
+        if (joueur1.isEmpty() || (!modeSolo && joueur2.isEmpty())) {
+            afficherErreur("Les pseudos doivent être renseignés.");
             return;
         }
-        if (joueur1.equalsIgnoreCase(joueur2)) {
+        if (!modeSolo && joueur1.equalsIgnoreCase(joueur2)) {
             afficherErreur("Les deux joueurs doivent avoir des pseudos différents.");
             return;
         }
         masquerErreur();
 
         PREFS.put(CLE_PSEUDO1, joueur1);
-        PREFS.put(CLE_PSEUDO2, joueur2);
         PREFS.put(CLE_COULEUR1, couleurJoueur1.name());
-        PREFS.put(CLE_COULEUR2, couleurJoueur2.name());
+        if (!modeSolo) {
+            PREFS.put(CLE_PSEUDO2, joueur2);
+            PREFS.put(CLE_COULEUR2, couleurJoueur2.name());
+        }
 
         afficherEcranChargement((Stage) nomJoueur1.getScene().getWindow(), joueur1, joueur2);
     }
@@ -269,33 +295,7 @@ public class ControleurAccueil {
     }
 
     private void chargerPlateauDeJeu(Stage primaryStage, String joueur1, String joueur2) throws IOException {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/ihm/Latice.fxml"));
-        Parent root = loader.load();
-
-        ControleurDeJeu controleurDeJeu = loader.getController();
-
-        controleurDeJeu.mettreMusique(musique);
-        Joueur joueurN1 = new Joueur(joueur1);
-        Joueur joueurN2 = new Joueur(joueur2);
-        Arbitre arbitre = new Arbitre(joueurN1, joueurN2);
-        controleurDeJeu.setArbitre(arbitre);
-        controleurDeJeu.nomsJoueurs(joueur1, joueur2);
-        controleurDeJeu.definirCouleursJoueurs(couleurJoueur1, couleurJoueur2);
-
-        Plateau plateau = new Plateau(9);
-        controleurDeJeu.initialiserPlateau(plateau);
-		controleurDeJeu.initialiserRackJoueurs(joueurN1, joueurN2);
-        controleurDeJeu.initialiserDragAndDrop();
-        controleurDeJeu.mettreAJourTour();
-        controleurDeJeu.initialiserTours();
-
-        Scene scene = new Scene(root);
-        primaryStage.setTitle("Latice - En cours");
-        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("/images/img_Latice/img/icone.png")));
-        primaryStage.setScene(scene);
-        primaryStage.setOnCloseRequest(event -> musique.arreterMusique());
-        primaryStage.setResizable(false);
-        primaryStage.show();
+        Navigation.demarrerPartie(primaryStage, musique, joueur1, joueur2, couleurJoueur1, couleurJoueur2, modeSolo);
     }
 
     @FXML

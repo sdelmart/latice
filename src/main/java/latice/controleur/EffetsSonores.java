@@ -16,7 +16,10 @@ public final class EffetsSonores {
 
     public enum Effet {
         CLIC("/sons/clic.wav"),
-        POSE_TUILE("/sons/pose_tuile.wav");
+        POSE_TUILE("/sons/pose_tuile.wav"),
+        VICTOIRE("/sons/victoire.wav"),
+        ERREUR("/sons/erreur.wav"),
+        CHANGEMENT_TOUR("/sons/changement_tour.wav");
 
         private final String chemin;
 

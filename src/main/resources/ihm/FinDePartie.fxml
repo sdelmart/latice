@@ -1,18 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
 <?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.media.MediaView?>
+<?import javafx.scene.shape.Circle?>
 
-<StackPane fx:id="rootPane" xmlns:fx="http://javafx.com/fxml/1" fx:controller="latice.controleur.ControleurFinDePartie" stylesheets="@../css/theme.css">
+<StackPane fx:id="rootPane" prefHeight="520" prefWidth="620" xmlns:fx="http://javafx.com/fxml/1" fx:controller="latice.controleur.ControleurFinDePartie" stylesheets="@../css/theme.css">
     <Region fx:id="fondRegion" maxHeight="Infinity" maxWidth="Infinity" />
-    <MediaView fx:id="mediaView" preserveRatio="false"/>
-    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40;">
-        <Label fx:id="labelTitre" styleClass="title-latice" text="Fin de la partie !" style="-fx-font-size: 40px;"/>
-        <Label fx:id="labelResultat" styleClass="subtitle" text="Résultat"/>
-        <Button text="Fermer" onAction="#fermerFenetre" styleClass="btn-primary"/>
+    <Region maxHeight="Infinity" maxWidth="Infinity" styleClass="scrim" />
+    <MediaView fx:id="mediaView" preserveRatio="false" opacity="0.5"/>
+    <VBox alignment="CENTER" spacing="18">
+        <padding>
+            <Insets bottom="30" left="40" right="40" top="30" />
+        </padding>
+        <Label fx:id="labelTitre" styleClass="title-latice" text="Fin de la partie !" style="-fx-font-size: 38px;"/>
+        <Label fx:id="labelVainqueur" styleClass="subtitle" text="Résultat" style="-fx-font-size: 17px;"/>
+        <HBox alignment="CENTER" spacing="20">
+            <VBox fx:id="carteJoueur1" alignment="CENTER" spacing="6" styleClass="card" maxWidth="220">
+                <padding>
+                    <Insets bottom="18" left="20" right="20" top="18" />
+                </padding>
+                <Circle fx:id="pastilleJoueur1" radius="10" />
+                <Label fx:id="labelNomJoueur1" styleClass="label-light" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Joueur 1" />
+                <Label fx:id="labelPointsJoueur1" styleClass="label-light" text="Points : 0" />
+                <Label fx:id="labelTuilesJoueur1" styleClass="subtitle" text="0 tuiles posées" />
+            </VBox>
+            <VBox fx:id="carteJoueur2" alignment="CENTER" spacing="6" styleClass="card" maxWidth="220">
+                <padding>
+                    <Insets bottom="18" left="20" right="20" top="18" />
+                </padding>
+                <Circle fx:id="pastilleJoueur2" radius="10" />
+                <Label fx:id="labelNomJoueur2" styleClass="label-light" style="-fx-font-size: 18px; -fx-font-weight: bold;" text="Joueur 2" />
+                <Label fx:id="labelPointsJoueur2" styleClass="label-light" text="Points : 0" />
+                <Label fx:id="labelTuilesJoueur2" styleClass="subtitle" text="0 tuiles posées" />
+            </VBox>
+        </HBox>
+        <HBox alignment="CENTER" spacing="14">
+            <VBox.margin>
+                <Insets top="10" />
+            </VBox.margin>
+            <Button onAction="#rejouer" styleClass="btn-primary" text="REJOUER" />
+            <Button onAction="#retourMenuPrincipal" styleClass="btn-secondary" text="Menu principal" />
+        </HBox>
     </VBox>
 </StackPane>
