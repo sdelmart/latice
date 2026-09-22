@@ -6,22 +6,26 @@ import javafx.scene.layout.StackPane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 
 
 public class ControleurFinDePartie {
-    @FXML 
+    @FXML
     private Label labelTitre;
-    @FXML 
+    @FXML
     private Label labelResultat;
     @FXML
     private MediaView mediaView;
     @FXML
     private StackPane rootPane;
+    @FXML
+    private Region fondRegion;
     private MediaPlayer mediaPlayer;
-    
+
     @FXML
     public void initialize() {
+        ThemeVisuel.lierFond(fondRegion);
         String cheminVideo = getClass().getResource("/video/Confetis.mp4").toExternalForm();
         Media media = new Media(cheminVideo);
         mediaPlayer = new MediaPlayer(media);

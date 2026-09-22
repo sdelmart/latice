@@ -9,6 +9,7 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
@@ -18,6 +19,10 @@ public class ControleurParametres {
     private Slider sliderVolume;
     @FXML
     private ComboBox<PisteMusicale> choixMusique;
+    @FXML
+    private ComboBox<FondEcran> choixFond;
+    @FXML
+    private Region fondRegion;
 
     private Musique musique;
 
@@ -30,7 +35,17 @@ public class ControleurParametres {
 
     @FXML
     private void initialize() {
+        ThemeVisuel.lierFond(fondRegion);
+
         choixMusique.getItems().setAll(PisteMusicale.values());
+        choixFond.getItems().setAll(FondEcran.values());
+        choixFond.setValue(ThemeVisuel.fondActuel());
+        choixFond.valueProperty().addListener((obs, oldVal, nouveauFond) -> {
+            if (nouveauFond != null) {
+                ThemeVisuel.definirFond(nouveauFond);
+            }
+        });
+
         if (musique != null && sliderVolume != null) {
             definirControles();
         }
@@ -102,7 +117,7 @@ public class ControleurParametres {
         VBox racine = new VBox(14, scrollPane, boutonFermer);
         racine.setAlignment(javafx.geometry.Pos.CENTER);
         racine.setPadding(new Insets(20));
-        racine.getStyleClass().add("background-ocean");
+        racine.getStyleClass().add(ThemeVisuel.fondActuel().classeCss());
 
         Scene scene = new Scene(racine);
         scene.getStylesheets().add(ControleurParametres.class.getResource("/css/theme.css").toExternalForm());

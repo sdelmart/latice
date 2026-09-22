@@ -7,64 +7,69 @@
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.HBox?>
 <?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.Region?>
 <?import javafx.scene.layout.StackPane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane maxHeight="650.0" maxWidth="900.0" minHeight="650.0" minWidth="900.0" prefHeight="650.0" prefWidth="900.0" styleClass="background-ocean" stylesheets="@../css/theme.css" xmlns="http://javafx.com/javafx/8.0.241" xmlns:fx="http://javafx.com/fxml/1" fx:controller="latice.controleur.ControleurAccueil">
+<StackPane maxHeight="650.0" maxWidth="900.0" minHeight="650.0" minWidth="900.0" prefHeight="650.0" prefWidth="900.0" stylesheets="@../css/theme.css" xmlns="http://javafx.com/javafx/8.0.241" xmlns:fx="http://javafx.com/fxml/1" fx:controller="latice.controleur.ControleurAccueil">
    <children>
+      <Region fx:id="fondRegion" maxHeight="Infinity" maxWidth="Infinity" />
+      <Region maxHeight="Infinity" maxWidth="Infinity" styleClass="scrim" />
       <Pane fx:id="floatingPane" maxHeight="650.0" maxWidth="900.0" mouseTransparent="true" prefHeight="650.0" prefWidth="900.0" style="-fx-background-color: transparent;" />
-   </children>
-   <top>
-      <VBox alignment="CENTER" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets top="55.0" />
-         </BorderPane.margin>
-         <children>
-            <Label styleClass="title-latice" text="LATICE" />
-            <Label styleClass="subtitle" text="Un jeu de tuiles, de stratégie et de mer">
-               <VBox.margin>
-                  <Insets top="4.0" />
-               </VBox.margin>
-            </Label>
-         </children>
-      </VBox>
-   </top>
-   <center>
-      <VBox alignment="CENTER" maxWidth="380.0" spacing="16.0" styleClass="card" BorderPane.alignment="CENTER">
-         <padding>
-            <Insets bottom="28.0" left="32.0" right="32.0" top="24.0" />
-         </padding>
-         <children>
-            <Label styleClass="section-label" text="NOUVELLE PARTIE" />
-            <VBox spacing="10.0">
+      <BorderPane maxHeight="650.0" maxWidth="900.0" prefHeight="650.0" prefWidth="900.0">
+         <top>
+            <VBox alignment="CENTER" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets top="55.0" />
+               </BorderPane.margin>
                <children>
-                  <TextField fx:id="nomJoueur1" promptText="Nom du Joueur 1" styleClass="text-field-dark" />
-                  <TextField fx:id="nomJoueur2" promptText="Nom du Joueur 2" styleClass="text-field-dark" />
+                  <Label styleClass="title-latice" text="LATICE" />
+                  <Label styleClass="subtitle" text="Un jeu de tuiles, de stratégie et de mer">
+                     <VBox.margin>
+                        <Insets top="4.0" />
+                     </VBox.margin>
+                  </Label>
                </children>
             </VBox>
-            <Label fx:id="labelErreur" managed="false" styleClass="error-label" text="Les deux pseudos doivent être renseignés." visible="false" />
-            <Button onAction="#validerJouerLatice" styleClass="btn-primary" text="JOUER">
-               <VBox.margin>
-                  <Insets top="6.0" />
-               </VBox.margin>
-            </Button>
-         </children>
-      </VBox>
-   </center>
-   <bottom>
-      <VBox alignment="CENTER" spacing="14.0" BorderPane.alignment="CENTER">
-         <BorderPane.margin>
-            <Insets bottom="36.0" top="20.0" />
-         </BorderPane.margin>
-         <children>
-            <HBox alignment="CENTER" spacing="14.0">
+         </top>
+         <center>
+            <VBox alignment="CENTER" maxWidth="380.0" spacing="16.0" styleClass="card" BorderPane.alignment="CENTER">
+               <padding>
+                  <Insets bottom="28.0" left="32.0" right="32.0" top="24.0" />
+               </padding>
                <children>
-                  <Button onAction="#ouvrirReglesAccueil" styleClass="btn-secondary" text="Règles du jeu" />
-                  <Button fx:id="boutonParametresAccueil" onAction="#ouvrirParametresAccueil" styleClass="btn-secondary" text="Paramètres" />
-                  <Button onAction="#quitterApplication" styleClass="btn-secondary" text="Quitter" />
+                  <Label styleClass="section-label" text="NOUVELLE PARTIE" />
+                  <VBox spacing="10.0">
+                     <children>
+                        <TextField fx:id="nomJoueur1" promptText="Nom du Joueur 1" styleClass="text-field-dark" />
+                        <TextField fx:id="nomJoueur2" promptText="Nom du Joueur 2" styleClass="text-field-dark" />
+                     </children>
+                  </VBox>
+                  <Label fx:id="labelErreur" managed="false" styleClass="error-label" text="Les deux pseudos doivent être renseignés." visible="false" />
+                  <Button onAction="#validerJouerLatice" styleClass="btn-primary" text="JOUER">
+                     <VBox.margin>
+                        <Insets top="6.0" />
+                     </VBox.margin>
+                  </Button>
                </children>
-            </HBox>
-         </children>
-      </VBox>
-   </bottom>
-</BorderPane>
+            </VBox>
+         </center>
+         <bottom>
+            <VBox alignment="CENTER" spacing="14.0" BorderPane.alignment="CENTER">
+               <BorderPane.margin>
+                  <Insets bottom="36.0" top="20.0" />
+               </BorderPane.margin>
+               <children>
+                  <HBox alignment="CENTER" spacing="14.0">
+                     <children>
+                        <Button onAction="#ouvrirReglesAccueil" styleClass="btn-secondary" text="Règles du jeu" />
+                        <Button fx:id="boutonParametresAccueil" onAction="#ouvrirParametresAccueil" styleClass="btn-secondary" text="Paramètres" />
+                        <Button onAction="#quitterApplication" styleClass="btn-secondary" text="Quitter" />
+                     </children>
+                  </HBox>
+               </children>
+            </VBox>
+         </bottom>
+      </BorderPane>
+   </children>
+</StackPane>

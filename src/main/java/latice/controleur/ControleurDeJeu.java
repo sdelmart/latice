@@ -13,6 +13,7 @@ import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.Region;
 import javafx.stage.Stage;
 import latice.metier.Joueur;
 import latice.metier.Plateau;
@@ -65,6 +66,8 @@ public class ControleurDeJeu {
     private Label labelTourActuel;
     @FXML
     private Button btnParametresLatice;
+    @FXML
+    private Region fondRegion;
 
     private Joueur joueur1;
     private Joueur joueur2;
@@ -81,6 +84,11 @@ public class ControleurDeJeu {
     private int tuilesPoseesCeTour = 0;
     private int tuilesPoseesJoueur1 = 0;
     private int tuilesPoseesJoueur2 = 0;
+
+    @FXML
+    private void initialize() {
+        ThemeVisuel.lierFond(fondRegion);
+    }
 
     public void setArbitre(Arbitre arbitre) {
         this.arbitre = arbitre;

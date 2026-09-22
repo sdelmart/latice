@@ -20,6 +20,7 @@ import latice.metier.Joueur;
 import latice.metier.Plateau;
 import javafx.animation.ScaleTransition;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.shape.Rectangle;
 
 public class ControleurAccueil {
@@ -28,6 +29,7 @@ public class ControleurAccueil {
     @FXML private TextField nomJoueur2;
     @FXML private Button boutonParametresAccueil;
     @FXML private Label labelErreur;
+    @FXML private Region fondRegion;
 
     private Musique musique;
 
@@ -35,51 +37,45 @@ public class ControleurAccueil {
 
     @FXML
     public void initialize() {
+        ThemeVisuel.lierFond(fondRegion);
+
+        // Décorations discrètes, cantonnées aux bords gauche/droite pour ne jamais recouvrir la carte centrale.
         String[] images = {
             "/images/img_Latice/img/FLEUR_BLEU.png",
             "/images/img_Latice/img/OISEAU_ROUGE.png",
             "/images/img_Latice/img/TORTUE_VERT.png",
             "/images/img_Latice/img/DAUPHIN_CYAN.png",
-            "/images/img_Latice/img/FLEUR_VERT.png",
             "/images/img_Latice/img/LEZARD_MAGENTA.png",
-            "/images/img_Latice/img/OISEAU_CYAN.png",
-            "/images/img_Latice/img/PLUME_JAUNE.png",
-            "/images/img_Latice/img/TORTUE_ROUGE.png",
-            "/images/img_Latice/img/DAUPHIN_MAGENTA.png"
+            "/images/img_Latice/img/PLUME_JAUNE.png"
         };
 
         double[][] positions = {
-            {60, 40},
-            {800, 60},
-            {40, 560},
-            {800, 560},
-            {450, 30},
-            {60, 300},
-            {800, 300},
-            {150, 520},
-            {700, 520},
-            {450, 590}
+            {40, 60},
+            {830, 60},
+            {40, 320},
+            {830, 320},
+            {40, 570},
+            {830, 570}
         };
 
         for (int i = 0; i < images.length; i++) {
             ImageView imageView = new ImageView(new Image(getClass().getResourceAsStream(images[i])));
-            Rectangle clip = new Rectangle(20, 20);
-            clip.setArcWidth(16);
-            clip.setArcHeight(16);
+            Rectangle clip = new Rectangle(28, 28);
+            clip.setArcWidth(20);
+            clip.setArcHeight(20);
             imageView.setClip(clip);
-            imageView.setFitWidth(20);
-            imageView.setFitHeight(20);
-            imageView.setOpacity(0.75);
+            imageView.setFitWidth(28);
+            imageView.setFitHeight(28);
+            imageView.setOpacity(0.55);
 
             imageView.setLayoutX(positions[i][0]);
             imageView.setLayoutY(positions[i][1]);
-            imageView.setRotate(0);
 
-            ScaleTransition zoom = new ScaleTransition(Duration.seconds(2), imageView);
+            ScaleTransition zoom = new ScaleTransition(Duration.seconds(2.5), imageView);
             zoom.setFromX(1.0);
             zoom.setFromY(1.0);
-            zoom.setToX(1.15);
-            zoom.setToY(1.15);
+            zoom.setToX(1.12);
+            zoom.setToY(1.12);
             zoom.setAutoReverse(true);
             zoom.setCycleCount(ScaleTransition.INDEFINITE);
             zoom.play();
@@ -87,7 +83,7 @@ public class ControleurAccueil {
             floatingPane.getChildren().add(imageView);
         }
     }
-    
+
     public void mettreMusique(Musique musique) {
         this.musique = musique;
     }

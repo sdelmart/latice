@@ -3,14 +3,18 @@ package latice.controleur;
 import javafx.animation.AnimationTimer;
 import javafx.fxml.FXML;
 import javafx.scene.control.ProgressBar;
+import javafx.scene.layout.Region;
 
 public class ControleurChargement {
     @FXML
     private ProgressBar progressBar;
-    
+    @FXML
+    private Region fondRegion;
+
     private Runnable chargementTermine;
-    
+
     public void initialize() {
+        ThemeVisuel.lierFond(fondRegion);
         // Animation de la progress bar
         AnimationTimer temps = new AnimationTimer() {
             @Override

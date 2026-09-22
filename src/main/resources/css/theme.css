@@ -16,6 +16,22 @@
     -fx-background-position: center;
 }
 
+.background-ardoise {
+    -fx-background-color: linear-gradient(to bottom, #101821, #1b2735);
+}
+
+.background-profond {
+    -fx-background-color: linear-gradient(to bottom right, #04121f, #123a5c);
+}
+
+.background-aube {
+    -fx-background-color: linear-gradient(to bottom right, #16233b, #4a3a55 55%, #c8912f);
+}
+
+.scrim {
+    -fx-background-color: rgba(4, 11, 20, 0.42);
+}
+
 .title-latice {
     -fx-font-family: "Georgia", serif;
     -fx-font-size: 64px;
