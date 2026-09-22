@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.layout.StackPane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.media.MediaView?>
+
+<StackPane fx:id="rootPane" xmlns:fx="http://javafx.com/fxml/1" fx:controller="latice.controleur.ControleurFinDePartie">
+    <MediaView fx:id="mediaView" preserveRatio="false"/>
+    <VBox alignment="CENTER" spacing="20" style="-fx-padding: 40;">
+        <Label fx:id="labelTitre" text="Fin de la partie !" style="-fx-font-size: 28px; -fx-text-fill: white;"/>
+        <Label fx:id="labelResultat" text="Résultat" style="-fx-font-size: 20px; -fx-text-fill: white;"/>
+        <Button text="Fermer" onAction="#fermerFenetre" style="-fx-font-size: 16px;"/>
+    </VBox>
+</StackPane>
