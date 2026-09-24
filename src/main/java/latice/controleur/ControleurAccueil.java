@@ -81,12 +81,12 @@ public class ControleurAccueil {
     private void creerDecorationsFlottantes() {
         // Décorations discrètes, cantonnées aux bords gauche/droite pour ne jamais recouvrir la carte centrale.
         String[] images = {
-            "/images/img_Latice/img/FLEUR_BLEU.png",
-            "/images/img_Latice/img/OISEAU_ROUGE.png",
-            "/images/img_Latice/img/TORTUE_VERT.png",
-            "/images/img_Latice/img/DAUPHIN_CYAN.png",
-            "/images/img_Latice/img/LEZARD_MAGENTA.png",
-            "/images/img_Latice/img/PLUME_JAUNE.png"
+            "/images/img_Latice/img/fleur_bleu.png",
+            "/images/img_Latice/img/oiseau_rouge.png",
+            "/images/img_Latice/img/tortue_vert.png",
+            "/images/img_Latice/img/dauphin_cyan.png",
+            "/images/img_Latice/img/lezard_magenta.png",
+            "/images/img_Latice/img/plume_jaune.png"
         };
 
         double[][] positions = {
