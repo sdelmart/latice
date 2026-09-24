@@ -1,5 +1,6 @@
 package main;
 
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 import latice.metier.Arbitre;
@@ -10,7 +11,7 @@ import latice.metier.Tuile;
 
 public class LaticeApplicationConsole {
 
-    private final Scanner lecteur = new Scanner(System.in);
+    private final Scanner lecteur = new Scanner(System.in, StandardCharsets.UTF_8);
     private Arbitre arbitre;
     private Plateau plateau;
     private int nombreToursJoueur1 = 0;

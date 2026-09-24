@@ -1,56 +1,40 @@
 package latice.metier;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.UncheckedIOException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
- * Historique local des parties jouées, stocké dans un fichier texte du dossier utilisateur
- * (portable Windows/Linux/macOS via user.home) : une ligne par partie, format CSV simple.
+ * Historique local des parties jouées, persisté dans une base SQLite embarquée
+ * du dossier utilisateur (portable Windows/Linux/macOS via user.home) : une base
+ * fichier unique, aucun serveur à installer, adaptée à une appli desktop mono-utilisateur.
  */
 public final class HistoriqueParties {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HistoriqueParties.class);
     private static final DateTimeFormatter FORMAT_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final int MAX_ENTREES = 50;
-    private static final String SEPARATEUR = ";";
 
-    private static final Path FICHIER = Paths.get(System.getProperty("user.home"), ".latice", "historique.csv");
+    private static final Path FICHIER_DB = Paths.get(System.getProperty("user.home"), ".latice", "historique.db");
 
     private HistoriqueParties() {
     }
 
     public record Partie(LocalDateTime date, String joueur1, int score1, String joueur2, int score2, String vainqueur) {
-
-        String versLigne() {
-            return date.format(FORMAT_DATE) + SEPARATEUR + joueur1 + SEPARATEUR + score1
-                    + SEPARATEUR + joueur2 + SEPARATEUR + score2 + SEPARATEUR + vainqueur;
-        }
-
-        static Partie depuisLigne(String ligne) {
-            String[] champs = ligne.split(SEPARATEUR, -1);
-            if (champs.length != 6) {
-                return null;
-            }
-            try {
-                return new Partie(
-                        LocalDateTime.parse(champs[0], FORMAT_DATE),
-                        champs[1], Integer.parseInt(champs[2]),
-                        champs[3], Integer.parseInt(champs[4]),
-                        champs[5]);
-            } catch (Exception e) {
-                return null;
-            }
-        }
 
         public String resume() {
             return date.format(FORMAT_DATE) + "  —  " + joueur1 + " (" + score1 + ") vs "
@@ -59,34 +43,75 @@ public final class HistoriqueParties {
     }
 
     public static void enregistrer(String joueur1, int score1, String joueur2, int score2, String vainqueur) {
-        Partie partie = new Partie(LocalDateTime.now(), joueur1, score1, joueur2, score2, vainqueur);
-        try {
-            Files.createDirectories(FICHIER.getParent());
-            Files.write(FICHIER, (partie.versLigne() + System.lineSeparator()).getBytes(StandardCharsets.UTF_8),
-                    StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-        } catch (IOException e) {
-            System.err.println("Impossible d'enregistrer l'historique : " + e.getMessage());
+        enregistrer(FICHIER_DB, joueur1, score1, joueur2, score2, vainqueur);
+    }
+
+    public static List<Partie> chargerHistorique() {
+        return chargerHistorique(FICHIER_DB);
+    }
+
+    /** Visibilité package pour permettre aux tests de pointer vers une base temporaire plutôt que ~/.latice. */
+    static void enregistrer(Path fichierDb, String joueur1, int score1, String joueur2, int score2, String vainqueur) {
+        String sql = "INSERT INTO parties (date, joueur1, score1, joueur2, score2, vainqueur) VALUES (?, ?, ?, ?, ?, ?)";
+        try (Connection connexion = ouvrirConnexion(fichierDb);
+                PreparedStatement stmt = connexion.prepareStatement(sql)) {
+            stmt.setString(1, LocalDateTime.now().format(FORMAT_DATE));
+            stmt.setString(2, joueur1);
+            stmt.setInt(3, score1);
+            stmt.setString(4, joueur2);
+            stmt.setInt(5, score2);
+            stmt.setString(6, vainqueur);
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            LOG.error("Impossible d'enregistrer l'historique dans {}", fichierDb, e);
         }
     }
 
     /** Les parties les plus récentes en premier, au maximum MAX_ENTREES. */
-    public static List<Partie> chargerHistorique() {
-        if (!Files.exists(FICHIER)) {
+    static List<Partie> chargerHistorique(Path fichierDb) {
+        if (!Files.exists(fichierDb)) {
             return Collections.emptyList();
         }
+        String sql = "SELECT date, joueur1, score1, joueur2, score2, vainqueur FROM parties ORDER BY id DESC LIMIT ?";
         List<Partie> parties = new ArrayList<>();
-        try (BufferedReader lecteur = Files.newBufferedReader(FICHIER, StandardCharsets.UTF_8)) {
-            String ligne;
-            while ((ligne = lecteur.readLine()) != null) {
-                Partie partie = Partie.depuisLigne(ligne);
-                if (partie != null) {
-                    parties.add(partie);
+        try (Connection connexion = ouvrirConnexion(fichierDb);
+                PreparedStatement stmt = connexion.prepareStatement(sql)) {
+            stmt.setInt(1, MAX_ENTREES);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    parties.add(new Partie(
+                            LocalDateTime.parse(rs.getString("date"), FORMAT_DATE),
+                            rs.getString("joueur1"), rs.getInt("score1"),
+                            rs.getString("joueur2"), rs.getInt("score2"),
+                            rs.getString("vainqueur")));
                 }
             }
-        } catch (IOException e) {
-            throw new UncheckedIOException(e);
+        } catch (SQLException e) {
+            LOG.error("Impossible de lire l'historique depuis {}", fichierDb, e);
         }
-        Collections.reverse(parties);
-        return parties.size() > MAX_ENTREES ? parties.subList(0, MAX_ENTREES) : parties;
+        return parties;
+    }
+
+    private static Connection ouvrirConnexion(Path fichierDb) throws SQLException {
+        Path dossierParent = fichierDb.toAbsolutePath().getParent();
+        if (dossierParent != null) {
+            try {
+                Files.createDirectories(dossierParent);
+            } catch (Exception e) {
+                LOG.warn("Impossible de créer le dossier de la base d'historique", e);
+            }
+        }
+        Connection connexion = DriverManager.getConnection("jdbc:sqlite:" + fichierDb);
+        try (Statement stmt = connexion.createStatement()) {
+            stmt.execute("CREATE TABLE IF NOT EXISTS parties ("
+                    + "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+                    + "date TEXT NOT NULL,"
+                    + "joueur1 TEXT NOT NULL,"
+                    + "score1 INTEGER NOT NULL,"
+                    + "joueur2 TEXT NOT NULL,"
+                    + "score2 INTEGER NOT NULL,"
+                    + "vainqueur TEXT NOT NULL)");
+        }
+        return connexion;
     }
 }

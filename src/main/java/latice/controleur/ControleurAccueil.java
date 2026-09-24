@@ -3,6 +3,9 @@ package latice.controleur;
 import java.io.IOException;
 import java.util.prefs.Preferences;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javafx.animation.FadeTransition;
 import javafx.animation.ScaleTransition;
 import javafx.application.Platform;
@@ -29,6 +32,7 @@ import latice.metier.HistoriqueParties;
 
 public class ControleurAccueil {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ControleurAccueil.class);
     private static final Preferences PREFS = Preferences.userNodeForPackage(ControleurAccueil.class);
     private static final String CLE_PSEUDO1 = "dernier_pseudo1";
     private static final String CLE_PSEUDO2 = "dernier_pseudo2";
@@ -279,7 +283,7 @@ public class ControleurAccueil {
                     chargerPlateauDeJeu(primaryStage, joueur1, joueur2);
 
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error("Impossible de charger le plateau de jeu", e);
                 }
             });
 
@@ -290,7 +294,7 @@ public class ControleurAccueil {
             primaryStage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Impossible d'afficher l'écran de chargement", e);
         }
     }
 
@@ -317,7 +321,7 @@ public class ControleurAccueil {
             stage.show();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Impossible d'ouvrir les paramètres", e);
         }
     }
 

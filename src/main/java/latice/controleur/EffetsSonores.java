@@ -7,12 +7,17 @@ import java.util.prefs.Preferences;
 
 import javafx.scene.media.AudioClip;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Effets sonores courts (clic, pose de tuile...), indépendants de la musique de fond
  * qui reste gérée par {@link Musique} (AudioClip est adapté aux sons brefs, contrairement
  * à MediaPlayer qui est fait pour une piste qui boucle).
  */
 public final class EffetsSonores {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EffetsSonores.class);
 
     public enum Effet {
         CLIC("/sons/clic.wav"),
@@ -59,7 +64,7 @@ public final class EffetsSonores {
     private static AudioClip charger(Effet effet) {
         URL url = EffetsSonores.class.getResource(effet.chemin);
         if (url == null) {
-            System.err.println("Effet sonore introuvable : " + effet.chemin);
+            LOG.warn("Effet sonore introuvable : {}", effet.chemin);
             return null;
         }
         return new AudioClip(url.toExternalForm());

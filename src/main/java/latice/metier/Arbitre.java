@@ -2,7 +2,12 @@ package latice.metier;
 
 import java.util.Random;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Arbitre {
+
+    private static final Logger LOG = LoggerFactory.getLogger(Arbitre.class);
     public final Joueur joueur1;
     public final Joueur joueur2;
     private Joueur joueurCourant;
@@ -46,7 +51,7 @@ public class Arbitre {
         } else {
             joueurCourant = joueur2;
         }
-        System.out.println("Le joueur qui commence est : " + joueurCourant.nom());
+        LOG.info("Le joueur qui commence est : {}", joueurCourant.nom());
     }
 
     public Joueur joueurCourant() {

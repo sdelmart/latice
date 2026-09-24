@@ -6,8 +6,12 @@ import java.util.prefs.Preferences;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class Musique {
 
+    private static final Logger LOG = LoggerFactory.getLogger(Musique.class);
     private static final Preferences PREFS = Preferences.userNodeForPackage(Musique.class);
     private static final String CLE_PISTE = "piste_selectionnee";
     private static final String CLE_VOLUME = "volume";
@@ -56,11 +60,11 @@ public class Musique {
             mediaPlayer = new MediaPlayer(media);
             mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
             mediaPlayer.setVolume(volumePrecedent);
-            mediaPlayer.setOnError(() -> System.err.println("Erreur MediaPlayer : " + mediaPlayer.getError().getMessage()));
+            mediaPlayer.setOnError(() -> LOG.error("Erreur MediaPlayer : {}", mediaPlayer.getError().getMessage()));
 
             mediaPlayer.play();
         } catch (Exception e) {
-            System.err.println("Erreur lors de la lecture de la musique : " + e.getMessage());
+            LOG.error("Erreur lors de la lecture de la musique", e);
         }
     }
 

@@ -35,8 +35,13 @@ import java.util.Optional;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 public class ControleurDeJeu {
+
+    private static final Logger LOG = LoggerFactory.getLogger(ControleurDeJeu.class);
 
     @FXML
     private GridPane rack1;
@@ -367,7 +372,7 @@ public class ControleurDeJeu {
         Joueur joueurActuel = arbitre.joueurCourant();
         GridPane rackActuel = joueurActuel == joueur1 ? rack1 : rack2;
         if (joueurActuel.pioche() == null) {
-            System.err.println("Pioche est null pour le joueur courant");
+            LOG.warn("Pioche nulle pour le joueur courant");
             return;
         }
         joueurActuel.pioche().avoirTuiles().addAll(joueurActuel.rack().obtenirTuilesRack());
@@ -390,7 +395,7 @@ public class ControleurDeJeu {
     private void actionPasse(ActionEvent event) {
         EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         if (arbitre == null) {
-            System.err.println("Erreur: Arbitre est non initialisé");
+            LOG.error("Arbitre non initialisé");
             return;
         }
         Joueur joueurCourant = arbitre.joueurCourant();
@@ -407,7 +412,7 @@ public class ControleurDeJeu {
     private void actionJouer(ActionEvent event) {
         EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         if (arbitre == null) {
-            System.err.println("Erreur: Arbitre est non initialisé");
+            LOG.error("Arbitre non initialisé");
             return;
         }
         Joueur joueurActuel = arbitre.joueurCourant();
@@ -503,7 +508,7 @@ public class ControleurDeJeu {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Impossible d'ouvrir les paramètres", e);
         }
     }
 
@@ -512,11 +517,11 @@ public class ControleurDeJeu {
         EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
         Joueur joueurActuel = arbitre.joueurCourant();
         if (joueurActuel.points() < 2) {
-            System.out.println("Vous n'avez pas assez de points pour acheter une action supplementaire!");
+            LOG.info("Achat d'action refusé : points insuffisants");
         } else {
             joueurActuel.ajouterPoints(-2);
             joueurActuel.nbActionsSup += 1;
-            System.out.println("Vous avez acheté une action supplementaire pour 2 points !");
+            LOG.info("Action supplémentaire achetée pour 2 points");
         }
         mettreAJourActions(joueurActuel);
         mettreAJourPoints(joueurActuel);
@@ -538,14 +543,14 @@ public class ControleurDeJeu {
                     Navigation.demarrerPartie(stage, musique, joueur1.nom(), joueur2.nom(),
                             couleurJoueur1, couleurJoueur2, modeSolo);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error("Impossible de relancer une partie", e);
                 }
             });
             controller.mettreSurMenuPrincipal(() -> {
                 try {
                     Navigation.ouvrirMenuPrincipal(stage, musique);
                 } catch (IOException e) {
-                    e.printStackTrace();
+                    LOG.error("Impossible d'ouvrir le menu principal", e);
                 }
             });
 
@@ -554,7 +559,7 @@ public class ControleurDeJeu {
             stage.setResizable(false);
             stage.show();
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("Impossible d'afficher l'écran de fin de partie", e);
         }
     }
 

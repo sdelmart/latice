@@ -2,45 +2,73 @@ package latice.metier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import java.time.LocalDateTime;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import latice.metier.HistoriqueParties.Partie;
 
 /**
- * Teste uniquement le format ligne <-> objet (pur, sans toucher au disque) :
- * enregistrer()/chargerHistorique() lisent/écrivent dans le dossier utilisateur réel
- * et ne sont volontairement pas testés ici pour ne pas polluer ~/.latice pendant les tests.
+ * Utilise une base SQLite temporaire (jamais ~/.latice/historique.db) pour tester
+ * la vraie logique d'enregistrement/lecture sans polluer le dossier de l'utilisateur.
  */
 class HistoriquePartiesTest {
 
-    @Test
-    void uneLigneSeRelitIdentique() {
-        Partie originale = new Partie(
-                LocalDateTime.of(2026, 9, 22, 18, 30),
-                "Alice", 12, "Bob", 9, "Alice");
+    private Path fichierDb;
 
-        Partie relue = Partie.depuisLigne(originale.versLigne());
+    @BeforeEach
+    void creerBaseTemporaire() throws IOException {
+        fichierDb = Files.createTempFile("latice-historique-test", ".db");
+        Files.deleteIfExists(fichierDb); // laisser HistoriqueParties créer le fichier lui-même
+    }
 
-        assertNotNull(relue);
-        assertEquals(originale.date(), relue.date());
-        assertEquals(originale.joueur1(), relue.joueur1());
-        assertEquals(originale.score1(), relue.score1());
-        assertEquals(originale.joueur2(), relue.joueur2());
-        assertEquals(originale.score2(), relue.score2());
-        assertEquals(originale.vainqueur(), relue.vainqueur());
+    @AfterEach
+    void supprimerBaseTemporaire() throws IOException {
+        Files.deleteIfExists(fichierDb);
     }
 
     @Test
-    void ligneMalFormeeRenvoieNull() {
-        assertNull(Partie.depuisLigne("n'importe quoi;pas le bon format"));
+    void aucuneEntreeSiLaBaseNexistePasEncore() {
+        assertTrue(HistoriqueParties.chargerHistorique(fichierDb).isEmpty());
     }
 
     @Test
-    void resumeContientLesNomsEtLeVainqueur() {
-        Partie partie = new Partie(LocalDateTime.of(2026, 9, 22, 18, 30), "Alice", 12, "Bob", 9, "Alice");
-        String resume = partie.resume();
+    void unePartieEnregistreeSeRetrouveALaLecture() {
+        HistoriqueParties.enregistrer(fichierDb, "Alice", 12, "Bob", 9, "Alice");
+
+        List<Partie> historique = HistoriqueParties.chargerHistorique(fichierDb);
+
+        assertEquals(1, historique.size());
+        Partie partie = historique.get(0);
+        assertEquals("Alice", partie.joueur1());
+        assertEquals(12, partie.score1());
+        assertEquals("Bob", partie.joueur2());
+        assertEquals(9, partie.score2());
+        assertEquals("Alice", partie.vainqueur());
+    }
+
+    @Test
+    void lesPartiesLesPlusRecentesArriventEnPremier() {
+        HistoriqueParties.enregistrer(fichierDb, "Alice", 5, "Bob", 3, "Alice");
+        HistoriqueParties.enregistrer(fichierDb, "Camille", 8, "David", 2, "Camille");
+
+        List<Partie> historique = HistoriqueParties.chargerHistorique(fichierDb);
+
+        assertEquals(2, historique.size());
+        assertEquals("Camille", historique.get(0).joueur1(), "La partie la plus récente doit arriver en premier");
+        assertEquals("Alice", historique.get(1).joueur1());
+    }
+
+    @Test
+    void resumeContientLesNomsEtLesScores() {
+        HistoriqueParties.enregistrer(fichierDb, "Alice", 12, "Bob", 9, "Alice");
+        String resume = HistoriqueParties.chargerHistorique(fichierDb).get(0).resume();
+
         assertTrue(resume.contains("Alice"));
         assertTrue(resume.contains("Bob"));
         assertTrue(resume.contains("12"));
