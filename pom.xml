@@ -54,14 +54,33 @@
 			<version>5.8.2</version>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- Tests d'interface (TestFX) : nécessitent un affichage réel, exclus par défaut en CI (voir surefire ci-dessous) -->
+		<dependency>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-core</artifactId>
+			<version>4.0.18</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-junit5</artifactId>
+			<version>4.0.18</version>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
-			<!-- Pour être compatible avec JUnit 5 -->
+			<!-- Pour être compatible avec JUnit 5. Les tests tagués "ui" (TestFX, nécessitent un
+			     affichage réel) sont exclus par défaut ; lancer `mvn test -DexcludedGroups=` pour
+			     les inclure sur un poste avec écran. -->
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.2</version>
+				<configuration>
+					<excludedGroups>ui</excludedGroups>
+				</configuration>
 			</plugin>
 
 			<!-- Pour lancer l'application JavaFX avec : mvn javafx:run -->

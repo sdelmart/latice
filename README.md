@@ -54,6 +54,13 @@ Produit un `.jar` exécutable incluant toutes les dépendances — utilisable sa
 
 Génère aussi un rapport de couverture JaCoCo dans `target/site/jacoco/index.html`.
 
+Les tests d'interface (TestFX, dossier `ControleurAccueilUITest`) nécessitent un affichage réel et
+sont donc exclus par défaut (utile en CI headless). Pour les inclure sur un poste avec écran :
+
+```bash
+./mvnw test -DexcludedGroups=
+```
+
 ## Compiler sans lancer
 
 ```bash
@@ -62,7 +69,7 @@ Génère aussi un rapport de couverture JaCoCo dans `target/site/jacoco/index.ht
 
 ## Intégration continue
 
-Chaque push/PR sur `main` déclenche [la CI GitHub Actions](.github/workflows/ci.yml) : les 36 tests tournent sur Ubuntu, Windows et macOS, un jar exécutable est construit, et une analyse statique (SpotBugs) s'exécute en non-bloquant.
+Chaque push/PR sur `main` déclenche [la CI GitHub Actions](.github/workflows/ci.yml) : les 36 tests (hors tests d'interface, voir ci-dessus) tournent sur Ubuntu, Windows et macOS, un jar exécutable est construit, et une analyse statique (SpotBugs) s'exécute en non-bloquant.
 
 ## Architecture
 

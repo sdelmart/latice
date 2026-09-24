@@ -4,6 +4,8 @@ Toutes les évolutions notables du projet, de la reprise après la SAE de groupe
 
 ## En cours
 
+- Tests d'interface réels (TestFX) sur la navigation de l'accueil, exclus du run par défaut (nécessitent un affichage) mais documentés et exécutables localement.
+- **Bug corrigé** : les images de tuiles avaient des noms de fichiers en majuscules alors que le code les cherchait en minuscules — invisible via `mvn javafx:run` (système de fichiers macOS insensible à la casse) mais faisait planter toute partie dès qu'on lisait les ressources depuis un vrai `.jar` (sensible à la casse partout). Trouvé en testant réellement le jar packagé avec `jpackage`.
 - Journalisation SLF4J/Logback à la place des `System.out.println`/`printStackTrace`.
 - Historique des parties migré du CSV vers une base SQLite embarquée, testée bout en bout (base temporaire en test).
 - Couverture de tests mesurée (JaCoCo).
