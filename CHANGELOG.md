@@ -19,6 +19,7 @@ Toutes les évolutions notables du projet, de la reprise après la SAE de groupe
 - Option `--verifier-ressources` : vérifie qu'un build contient toutes ses ressources, SQLite et bibliothèques natives JavaFX.
 
 ### Distribution
+- JavaFX 21.0.3 → 22.0.2 : Maven Central ne publie les artefacts `linux-aarch64` qu'à partir de la 22.0.2 (toujours compatible JDK 17), indispensable au paquet Linux ARM64.
 - **Releases GitHub** : archives `.tar.gz` pour Linux x64 et ARM64, macOS Intel et Apple Silicon et Windows x64 (+ `.zip` Windows, `.dmg`, `.deb`, `.msi` quand l'outillage de la machine de build le permet), avec l'environnement Java embarqué et `SHA256SUMS.txt`, produites par `.github/workflows/release.yml` à chaque tag `vX.Y.Z`.
 
 ### Décision

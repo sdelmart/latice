@@ -2,20 +2,21 @@
 
 ## Pitch court (une phrase)
 
-Jeu de société *Latice* en Java/JavaFX, repris en solo après le projet de groupe initial (SAE 1ère année BUT Informatique) : mode solo contre une IA, aide au placement, personnalisation, historique des parties et thèmes visuels, avec un build Maven multiplateforme et 35 tests JUnit 5.
+Jeu de société *Latice* en Java/JavaFX, repris en solo après le projet de groupe initial (SAE 1ère année BUT Informatique) : mode solo contre une IA, aide au placement, sauvegarde et reprise de partie, personnalisation, historique des parties et thèmes visuels, distribué en paquets natifs pour Windows, macOS (Intel et Apple Silicon) et Linux (x86-64 et ARM64), avec 65 tests JUnit 5 et une CI multiplateforme.
 
 ## Description longue
 
 Latice est un jeu de plateau au tour par tour (type Qwirkle) développé en Java/JavaFX. Initialement réalisé en équipe pendant une SAE de 1ère année de BUT Informatique, le projet a été repris et considérablement enrichi en solo :
 
 - **Mode solo contre une IA** qui choisit, à chaque tour, le coup légal le plus rentable sur son rack (règles d'adjacence couleur/symbole identiques à un joueur humain).
+- **Sauvegarde automatique et reprise de partie** (bouton *Continuer*).
 - **Aide au placement** : les cases où une tuile peut être posée s'illuminent pendant le glisser-déposer.
 - **Menu principal façon jeu vidéo** avec navigation en fondu entre écrans (Jouer, Profils, Règles, Paramètres, Crédits).
 - **Personnalisation** : pseudo et couleur par joueur, mémorisés d'une partie à l'autre.
 - **Historique des parties** persistant localement.
 - **Musique, effets sonores et thèmes visuels** (dégradés et photos) sélectionnables et sauvegardés.
 - **Build Maven multiplateforme** (Windows/Linux/macOS) via Maven Wrapper — aucune installation de Maven nécessaire.
-- **Architecture MVC testée** : logique métier (`latice.metier`) totalement découplée de JavaFX, 35 tests JUnit 5 (règles de jeu, IA, format de l'historique).
+- **Architecture MVC testée** : logique métier (`latice.metier`) totalement découplée de JavaFX, 65 tests JUnit 5 (règles de jeu, parties IA contre IA complètes, sauvegarde/reprise, ressources du build) et des tests d'interface TestFX.
 
 ## Stack technique
 
