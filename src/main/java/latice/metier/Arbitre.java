@@ -13,13 +13,21 @@ public class Arbitre {
     private Joueur joueurCourant;
     private final Pioche pioche;
     private final Random random = new Random();
-    public Plateau plateau = new Plateau(9);
+    public Plateau plateau = new Plateau(Regles.TAILLE_PLATEAU);
 
     public Arbitre(Joueur joueur1, Joueur joueur2) {
         this.joueur1 = joueur1;
         this.joueur2 = joueur2;
         this.pioche = new Pioche();
         initialiserPartie();
+    }
+
+    /** Reprise d'une partie sauvegardée : aucune distribution, les racks et pioches sont restaurés ensuite. */
+    Arbitre(Joueur joueur1, Joueur joueur2, Joueur joueurCourant) {
+        this.joueur1 = joueur1;
+        this.joueur2 = joueur2;
+        this.pioche = new Pioche(java.util.Collections.emptyList());
+        this.joueurCourant = joueurCourant;
     }
 
     public Arbitre(String nomJoueur1, String nomJoueur2) {

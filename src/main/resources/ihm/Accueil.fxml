@@ -41,6 +41,7 @@
                <center>
                   <VBox alignment="CENTER" spacing="14.0" BorderPane.alignment="CENTER">
                      <children>
+                        <Button fx:id="boutonContinuer" managed="false" onAction="#continuerPartie" styleClass="btn-menu" text="CONTINUER" visible="false" />
                         <Button onAction="#afficherPanneauNouvellePartie" styleClass="btn-menu" text="JOUER" />
                         <Button onAction="#afficherPanneauProfils" styleClass="btn-menu" text="PROFILS" />
                         <Button onAction="#ouvrirReglesAccueil" styleClass="btn-menu" text="RÈGLES DU JEU" />

@@ -2,7 +2,6 @@ package latice.metier;
 
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -29,7 +28,9 @@ public final class HistoriqueParties {
     private static final DateTimeFormatter FORMAT_DATE = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
     private static final int MAX_ENTREES = 50;
 
-    private static final Path FICHIER_DB = Paths.get(System.getProperty("user.home"), ".latice", "historique.db");
+    private static Path fichierParDefaut() {
+        return Donnees.fichier("historique.db");
+    }
 
     private HistoriqueParties() {
     }
@@ -43,11 +44,11 @@ public final class HistoriqueParties {
     }
 
     public static void enregistrer(String joueur1, int score1, String joueur2, int score2, String vainqueur) {
-        enregistrer(FICHIER_DB, joueur1, score1, joueur2, score2, vainqueur);
+        enregistrer(fichierParDefaut(), joueur1, score1, joueur2, score2, vainqueur);
     }
 
     public static List<Partie> chargerHistorique() {
-        return chargerHistorique(FICHIER_DB);
+        return chargerHistorique(fichierParDefaut());
     }
 
     /** Visibilité package pour permettre aux tests de pointer vers une base temporaire plutôt que ~/.latice. */

@@ -13,6 +13,9 @@
 		<main.class>main.LancementLatice</main.class>
 		<!-- Classe de lancement du jar autonome : ne doit PAS étendre Application (voir main.Main) -->
 		<jar.main.class>main.Main</jar.main.class>
+		<!-- Tags de tests exclus par défaut : les tests d'interface (TestFX) nécessitent un affichage.
+		     Les inclure : mvn test -Dtests.exclus=aucun -->
+		<tests.exclus>ui</tests.exclus>
 	</properties>
 
 	<dependencies>
@@ -73,13 +76,17 @@
 	<build>
 		<plugins>
 			<!-- Pour être compatible avec JUnit 5. Les tests tagués "ui" (TestFX, nécessitent un
-			     affichage réel) sont exclus par défaut ; lancer `mvn test -DexcludedGroups=` pour
+			     affichage réel) sont exclus par défaut ; lancer `mvn test -Dtests.exclus=aucun` pour
 			     les inclure sur un poste avec écran. -->
 			<plugin>
 				<artifactId>maven-surefire-plugin</artifactId>
 				<version>2.22.2</version>
 				<configuration>
-					<excludedGroups>ui</excludedGroups>
+					<excludedGroups>${tests.exclus}</excludedGroups>
+					<systemPropertyVariables>
+						<!-- Les tests n'écrivent jamais dans ~/.latice -->
+						<latice.donnees>${project.build.directory}/donnees-test</latice.donnees>
+					</systemPropertyVariables>
 				</configuration>
 			</plugin>
 

@@ -8,12 +8,11 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import latice.enumeration.Couleur;
-import latice.metier.Arbitre;
-import latice.metier.Joueur;
-import latice.metier.Plateau;
+import latice.metier.Partie;
+import latice.metier.Sauvegarde;
 
-/** Points d'entrée réutilisés pour ouvrir l'accueil ou démarrer une partie depuis n'importe où
- * (lancement de l'appli, ou boutons "Rejouer"/"Menu principal" de l'écran de fin de partie). */
+/** Points d'entrée réutilisés pour ouvrir l'accueil ou démarrer/reprendre une partie depuis n'importe où
+ * (lancement de l'appli, boutons "Continuer", "Rejouer" et "Menu principal"). */
 public final class Navigation {
 
     private Navigation() {
@@ -34,26 +33,21 @@ public final class Navigation {
 
     public static void demarrerPartie(Stage stage, Musique musique, String nomJoueur1, String nomJoueur2,
             Couleur couleurJoueur1, Couleur couleurJoueur2, boolean solo) throws IOException {
+        afficherPartie(stage, musique, new Partie(nomJoueur1, nomJoueur2), couleurJoueur1, couleurJoueur2, solo);
+    }
+
+    public static void reprendrePartie(Stage stage, Musique musique, Sauvegarde sauvegarde) throws IOException {
+        afficherPartie(stage, musique, Partie.restaurer(sauvegarde),
+                sauvegarde.joueurs().get(0).couleur(), sauvegarde.joueurs().get(1).couleur(), sauvegarde.solo());
+    }
+
+    private static void afficherPartie(Stage stage, Musique musique, Partie partie, Couleur couleurJoueur1,
+            Couleur couleurJoueur2, boolean solo) throws IOException {
         FXMLLoader loader = new FXMLLoader(Navigation.class.getResource("/ihm/Latice.fxml"));
         Parent root = loader.load();
 
         ControleurDeJeu controleurDeJeu = loader.getController();
-        controleurDeJeu.mettreMusique(musique);
-
-        Joueur joueur1 = new Joueur(nomJoueur1);
-        Joueur joueur2 = new Joueur(nomJoueur2);
-        Arbitre arbitre = new Arbitre(joueur1, joueur2);
-        controleurDeJeu.setArbitre(arbitre);
-        controleurDeJeu.nomsJoueurs(nomJoueur1, nomJoueur2);
-        controleurDeJeu.definirCouleursJoueurs(couleurJoueur1, couleurJoueur2);
-        controleurDeJeu.definirModeSolo(solo);
-
-        Plateau plateau = new Plateau(9);
-        controleurDeJeu.initialiserPlateau(plateau);
-        controleurDeJeu.initialiserRackJoueurs(joueur1, joueur2);
-        controleurDeJeu.initialiserDragAndDrop();
-        controleurDeJeu.mettreAJourTour();
-        controleurDeJeu.initialiserTours();
+        controleurDeJeu.demarrer(partie, musique, couleurJoueur1, couleurJoueur2, solo);
 
         stage.setTitle("Latice - En cours");
         stage.getIcons().setAll(new Image(Navigation.class.getResourceAsStream("/images/img_Latice/img/icone.png")));

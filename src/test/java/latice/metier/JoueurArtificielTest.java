@@ -15,70 +15,73 @@ import latice.metier.JoueurArtificiel.Coup;
 
 class JoueurArtificielTest {
 
+    private final Plateau plateau = new Plateau(Regles.TAILLE_PLATEAU);
+
     @Test
     void aucunCoupSiRackVide() {
-        Plateau plateau = new Plateau(9);
-        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, List.of(), Map.of(), false);
+        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, List.of(), Map.of());
         assertTrue(coup.isEmpty());
     }
 
     @Test
     void premierCoupObligatoirementAuCentre() {
-        Plateau plateau = new Plateau(9);
         List<Tuile> rack = List.of(new Tuile(Couleur.ROUGE, Symbole.FLEUR));
 
-        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, rack, new HashMap<>(), false);
+        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, rack, new HashMap<>());
 
         assertTrue(coup.isPresent());
-        int centre = plateau.tailleplateau() / 2;
-        assertEquals(centre, coup.get().position().posX());
-        assertEquals(centre, coup.get().position().posY());
+        assertEquals(Regles.centre(plateau), coup.get().position());
     }
 
     @Test
-    void refuseUnCoupSansAdjacenceValide() {
-        Plateau plateau = new Plateau(9);
+    void refuseUnCoupSansTuileCompatible() {
         Map<Position, Tuile> tuilesPlacees = new HashMap<>();
-        // Tuile posée au centre : ni la même couleur, ni le même symbole que la tuile du rack.
         tuilesPlacees.put(new Position(4, 4), new Tuile(Couleur.ROUGE, Symbole.FLEUR));
         List<Tuile> rack = List.of(new Tuile(Couleur.BLEU, Symbole.OISEAU));
 
-        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, rack, tuilesPlacees, true);
-
-        assertTrue(coup.isEmpty());
+        assertTrue(JoueurArtificiel.choisirCoup(plateau, rack, tuilesPlacees).isEmpty());
     }
 
     @Test
-    void choisitUneCaseAdjacenteValideParCouleurOuSymbole() {
-        Plateau plateau = new Plateau(9);
+    void choisitUneCaseAdjacenteCompatible() {
         Map<Position, Tuile> tuilesPlacees = new HashMap<>();
         tuilesPlacees.put(new Position(4, 4), new Tuile(Couleur.ROUGE, Symbole.FLEUR));
-        // Même couleur que la tuile posée : placement valide sur une case adjacente.
         List<Tuile> rack = List.of(new Tuile(Couleur.ROUGE, Symbole.OISEAU));
 
-        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, rack, tuilesPlacees, true);
+        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, rack, tuilesPlacees);
 
         assertTrue(coup.isPresent());
         Position pos = coup.get().position();
-        boolean adjacenteAuCentre =
-                (pos.posX() == 3 && pos.posY() == 4) || (pos.posX() == 5 && pos.posY() == 4)
-                || (pos.posX() == 4 && pos.posY() == 3) || (pos.posX() == 4 && pos.posY() == 5);
-        assertTrue(adjacenteAuCentre, "Le coup doit être adjacent à la tuile déjà posée");
+        int distance = Math.abs(pos.posX() - 4) + Math.abs(pos.posY() - 4);
+        assertEquals(1, distance, "Le coup doit être adjacent à la tuile déjà posée");
     }
 
     @Test
-    void preferantLeMeilleurScoreEntrePlusieursCoupsPossibles() {
-        Plateau plateau = new Plateau(9);
+    void neJoueJamaisUnCoupIncompatibleAvecUneDesVoisines() {
         Map<Position, Tuile> tuilesPlacees = new HashMap<>();
-        // Deux tuiles rouges adjacentes à la même case libre (4,5) : la poser là donne 2 tuiles associées (1 point),
-        // alors qu'ailleurs elle ne serait adjacente qu'à une seule tuile (aucune adjacence côté opposé configurée ici).
+        tuilesPlacees.put(new Position(3, 4), new Tuile(Couleur.ROUGE, Symbole.FLEUR));
+        tuilesPlacees.put(new Position(5, 4), new Tuile(Couleur.BLEU, Symbole.OISEAU));
+        // Une rouge/tortue est compatible avec la tuile de gauche (rouge) mais pas avec celle de droite :
+        // elle ne doit pas être jouée entre les deux, en (4,4).
+        List<Tuile> rack = List.of(new Tuile(Couleur.ROUGE, Symbole.TORTUE));
+
+        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, rack, tuilesPlacees);
+
+        coup.ifPresent(c -> assertNotEquals(new Position(4, 4), c.position()));
+    }
+
+    @Test
+    void prefereLeCoupQuiRapporteLeMieux() {
+        Map<Position, Tuile> tuilesPlacees = new HashMap<>();
+        // (3,5) et (5,5) rouges : poser une rouge en (4,5) touche deux tuiles (1 point).
         tuilesPlacees.put(new Position(3, 5), new Tuile(Couleur.ROUGE, Symbole.FLEUR));
         tuilesPlacees.put(new Position(5, 5), new Tuile(Couleur.ROUGE, Symbole.FLEUR));
         List<Tuile> rack = List.of(new Tuile(Couleur.ROUGE, Symbole.TORTUE));
 
-        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, rack, tuilesPlacees, true);
+        Optional<Coup> coup = JoueurArtificiel.choisirCoup(plateau, rack, tuilesPlacees);
 
         assertTrue(coup.isPresent());
-        assertTrue(coup.get().score() >= 0);
+        assertEquals(1, coup.get().score());
+        assertEquals(new Position(4, 5), coup.get().position());
     }
 }

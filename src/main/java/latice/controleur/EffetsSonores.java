@@ -31,6 +31,10 @@ public final class EffetsSonores {
         Effet(String chemin) {
             this.chemin = chemin;
         }
+
+        public String chemin() {
+            return chemin;
+        }
     }
 
     private static final Preferences PREFS = Preferences.userNodeForPackage(EffetsSonores.class);

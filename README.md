@@ -58,7 +58,7 @@ Les tests d'interface (TestFX, dossier `ControleurAccueilUITest`) nécessitent u
 sont donc exclus par défaut (utile en CI headless). Pour les inclure sur un poste avec écran :
 
 ```bash
-./mvnw test -DexcludedGroups=
+./mvnw test -Dtests.exclus=aucun
 ```
 
 ## Compiler sans lancer

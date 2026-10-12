@@ -23,6 +23,17 @@ public class Pioche {
         this.index = 0;
     }
 
+    // Reconstitue une pioche en cours de partie (liste complète + nombre de tuiles déjà piochées)
+    public Pioche(List<Tuile> tuiles, int index) {
+        this.tuiles = new ArrayList<>(tuiles);
+        this.index = Math.max(0, Math.min(index, tuiles.size()));
+    }
+
+    // Nombre de tuiles déjà piochées dans la liste
+    public int indexCourant() {
+        return index;
+    }
+
     // Crée une pioche avec toutes les combinaisons de couleurs et symboles
     public void creerPioche() {
         tuiles = new ArrayList<>();

@@ -7,6 +7,7 @@ import latice.metier.Arbitre;
 import latice.metier.Joueur;
 import latice.metier.Plateau;
 import latice.metier.Position;
+import latice.metier.Regles;
 import latice.metier.Tuile;
 
 public class LaticeApplicationConsole {
@@ -211,23 +212,7 @@ public class LaticeApplicationConsole {
     }
     
     private int gagnerPoints(Position pos) {
-        int[] directionX = {-1, 1, 0, 0};
-        int[] directionY = {0, 0, -1, 1};
-        int nbAdjacents = 0;
-        for (int i = 0; i < 4; i++) {
-            Position adjacent = new Position(pos.posX() + directionX[i], pos.posY() + directionY[i]);
-            if (plateau.obtenirTuilesPlacees().containsKey(adjacent)) {
-                nbAdjacents++;
-            }
-        }
-        int points = 0;
-        if (nbAdjacents == 2) points = 1;
-        else if (nbAdjacents == 3) points = 2;
-        else if (nbAdjacents == 4) points = 4;
-        if (plateau.casePlateau(pos.posY(), pos.posX()) == Plateau.TypeCase.SOLEIL) {
-            points += 2;
-        }
-        return points;
+        return Regles.pointsGagnes(plateau, plateau.obtenirTuilesPlacees(), pos);
     }
 
     private void echangerTuiles(Joueur joueur) {
@@ -319,25 +304,7 @@ public class LaticeApplicationConsole {
     }
 
     private boolean estPlacementValide(Position position, Tuile tuile) {
-        if (plateau.obtenirTuilesPlacees().isEmpty())
-            return position.posX() == 4 && position.posY() == 4;
-        int[][] directions = { {0,1}, {1,0}, {0,-1}, {-1,0} };
-        boolean adjacent = false;
-        boolean estValide = false;
-        for (int[] d : directions) {
-            int adjacentX = position.posX() + d[0];
-            int adjacentY = position.posY() + d[1];
-            if (adjacentX >= 0 && adjacentX < plateau.tailleplateau() && adjacentY >= 0 && adjacentY < plateau.tailleplateau()) {
-                Tuile voisine = plateau.obtenirTuile(new Position(adjacentX, adjacentY));
-                if (voisine != null) {
-                    adjacent = true;
-                    if (voisine.obtenirCouleur() == tuile.obtenirCouleur() || voisine.obtenirSymbole() == tuile.obtenirSymbole()) {
-                        estValide = true;
-                    }
-                }
-            }
-        }
-        return adjacent && estValide;
+        return Regles.estPlacementValide(plateau, plateau.obtenirTuilesPlacees(), position, tuile);
     }
 
     private void remplirRack(Joueur joueur) {

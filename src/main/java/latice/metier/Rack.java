@@ -7,7 +7,7 @@ import java.util.List;
 public class Rack {
 	
     private final List<Tuile> tuiles = new ArrayList<>(); // Liste des tuiles dans le rack
-    private static final int NBTUILES = 5; // Nombre maximum de tuiles dans le rack
+    private static final int NBTUILES = Regles.TAILLE_RACK; // Nombre maximum de tuiles dans le rack
 
     // Ajoute une tuile au rack si ce dernier n'est pas plein
     public boolean ajouterTuile(Tuile tuile) {

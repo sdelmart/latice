@@ -1,6 +1,7 @@
 package latice.controleur;
 
 import java.io.IOException;
+import java.util.Optional;
 import java.util.prefs.Preferences;
 
 import org.slf4j.Logger;
@@ -14,7 +15,10 @@ import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
@@ -29,6 +33,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import latice.enumeration.Couleur;
 import latice.metier.HistoriqueParties;
+import latice.metier.Sauvegarde;
 
 public class ControleurAccueil {
 
@@ -48,6 +53,7 @@ public class ControleurAccueil {
     @FXML private HBox swatchesJoueur1;
     @FXML private HBox swatchesJoueur2;
     @FXML private ListView<String> listeHistorique;
+    @FXML private Button boutonContinuer;
     @FXML private Button boutonMode2Joueurs;
     @FXML private Button boutonModeSolo;
     @FXML private VBox blocJoueur2;
@@ -71,6 +77,10 @@ public class ControleurAccueil {
         couleurJoueur2 = lireCouleurSauvegardee(CLE_COULEUR2, Couleur.ROUGE);
         remplirSwatches(swatchesJoueur1, couleurJoueur1, c -> couleurJoueur1 = c);
         remplirSwatches(swatchesJoueur2, couleurJoueur2, c -> couleurJoueur2 = c);
+
+        boolean partieSauvegardee = Sauvegarde.charger().isPresent();
+        boutonContinuer.setVisible(partieSauvegardee);
+        boutonContinuer.setManaged(partieSauvegardee);
 
         nomJoueur1.setText(PREFS.get(CLE_PSEUDO1, ""));
         nomJoueur2.setText(PREFS.get(CLE_PSEUDO2, ""));
@@ -244,6 +254,10 @@ public class ControleurAccueil {
         }
         masquerErreur();
 
+        if (Sauvegarde.existe() && !confirmerRemplacementDeLaSauvegarde()) {
+            return;
+        }
+
         PREFS.put(CLE_PSEUDO1, joueur1);
         PREFS.put(CLE_COULEUR1, couleurJoueur1.name());
         if (!modeSolo) {
@@ -252,6 +266,36 @@ public class ControleurAccueil {
         }
 
         afficherEcranChargement((Stage) nomJoueur1.getScene().getWindow(), joueur1, joueur2);
+    }
+
+    private boolean confirmerRemplacementDeLaSauvegarde() {
+        ButtonType remplacer = new ButtonType("Remplacer", ButtonBar.ButtonData.OK_DONE);
+        ButtonType annuler = new ButtonType("Annuler", ButtonBar.ButtonData.CANCEL_CLOSE);
+        Alert alerte = new Alert(Alert.AlertType.CONFIRMATION,
+                "Une partie en cours est sauvegardée. Commencer une nouvelle partie la remplacera définitivement.",
+                remplacer, annuler);
+        alerte.setTitle("Partie sauvegardée");
+        alerte.setHeaderText("Remplacer la partie en cours ?");
+        alerte.getDialogPane().getStylesheets().add(getClass().getResource("/css/theme.css").toExternalForm());
+        alerte.getDialogPane().getStyleClass().add("dialog-pane-ocean");
+        alerte.getDialogPane().lookupAll(".label").forEach(n -> n.getStyleClass().add("label-light"));
+        return alerte.showAndWait().filter(bouton -> bouton == remplacer).isPresent();
+    }
+
+    @FXML
+    private void continuerPartie() {
+        EffetsSonores.jouer(EffetsSonores.Effet.CLIC);
+        Optional<Sauvegarde> sauvegarde = Sauvegarde.charger();
+        if (sauvegarde.isEmpty()) {
+            boutonContinuer.setVisible(false);
+            boutonContinuer.setManaged(false);
+            return;
+        }
+        try {
+            Navigation.reprendrePartie((Stage) boutonContinuer.getScene().getWindow(), musique, sauvegarde.get());
+        } catch (IOException e) {
+            LOG.error("Impossible de reprendre la partie sauvegardée", e);
+        }
     }
 
     private void afficherErreur(String message) {

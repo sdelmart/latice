@@ -21,7 +21,7 @@ import static org.testfx.util.WaitForAsyncUtils.waitForFxEvents;
  * Test d'interface réel (TestFX) : charge le vrai FXML dans une vraie fenêtre JavaFX et déclenche
  * les actions des boutons pour vérifier la navigation entre panneaux. Nécessite un affichage —
  * exclu de `mvn test` par défaut (voir <excludedGroups> dans le pom), donc absent des runners CI
- * headless. Lancer avec `mvn test -DexcludedGroups=` sur un poste avec écran pour les inclure.
+ * headless. Lancer avec `mvn test -Dtests.exclus=aucun` sur un poste avec écran pour les inclure.
  *
  * <p>Utilise {@code Button.fire()} plutôt que le robot souris de TestFX (clickOn) : sur cet
  * environnement, les clics simulés au niveau OS n'atteignent pas de façon fiable une fenêtre qui
