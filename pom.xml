@@ -9,7 +9,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<maven.compiler.source>17</maven.compiler.source>
 		<maven.compiler.target>17</maven.compiler.target>
-		<javafx.version>21.0.3</javafx.version>
+		<javafx.version>22.0.2</javafx.version>
 		<main.class>main.LancementLatice</main.class>
 		<!-- Classe de lancement du jar autonome : ne doit PAS étendre Application (voir main.Main) -->
 		<jar.main.class>main.Main</jar.main.class>
