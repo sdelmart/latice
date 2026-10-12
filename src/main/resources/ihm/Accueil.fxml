@@ -26,7 +26,7 @@
                <top>
                   <VBox alignment="CENTER" BorderPane.alignment="CENTER">
                      <BorderPane.margin>
-                        <Insets top="70.0" />
+                        <Insets top="40.0" />
                      </BorderPane.margin>
                      <children>
                         <Label styleClass="title-latice" text="LATICE" />
@@ -39,7 +39,7 @@
                   </VBox>
                </top>
                <center>
-                  <VBox alignment="CENTER" spacing="14.0" BorderPane.alignment="CENTER">
+                  <VBox alignment="CENTER" spacing="12.0" BorderPane.alignment="CENTER">
                      <children>
                         <Button fx:id="boutonContinuer" managed="false" onAction="#continuerPartie" styleClass="btn-menu" text="CONTINUER" visible="false" />
                         <Button onAction="#afficherPanneauNouvellePartie" styleClass="btn-menu" text="JOUER" />

@@ -1,0 +1,190 @@
+name: Release
+
+# Un tag `vX.Y.Z` (qui doit correspondre à la version du pom) construit l'application sur chaque
+# plateforme, vérifie le paquet, puis publie la release GitHub avec tous les fichiers.
+# Lancé à la main (workflow_dispatch), il construit et teste tout mais ne publie rien.
+on:
+  push:
+    tags: [ "v*" ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Modules du JDK embarqués dans l'application (calculés avec jdeps, plus java.management pour logback).
+  MODULES: java.base,java.desktop,java.naming,java.prefs,java.scripting,java.sql,java.management,jdk.unsupported,jdk.jfr
+
+jobs:
+  tests:
+    name: Tests avant release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+      - run: ./mvnw -B test
+
+  package:
+    name: Paquet ${{ matrix.id }}
+    needs: tests
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - { id: linux-x64,   os: ubuntu-24.04 }
+          - { id: linux-arm64, os: ubuntu-24.04-arm }
+          - { id: macos-arm64, os: macos-latest }
+          - { id: macos-x64,   os: macos-15-intel }
+          - { id: windows-x64, os: windows-latest }
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+          cache: maven
+
+      - name: Version
+        run: |
+          VERSION=$(sed -n 's:.*<version>\(.*\)</version>.*:\1:p' pom.xml | head -1)
+          if [[ "$GITHUB_REF_TYPE" == "tag" && "$GITHUB_REF_NAME" != "v$VERSION" ]]; then
+            echo "Le tag $GITHUB_REF_NAME ne correspond pas à la version du pom ($VERSION)"
+            exit 1
+          fi
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "Version : $VERSION"
+
+      - name: Construire le jar
+        run: ./mvnw -B -q package -DskipTests
+
+      - name: Créer l'application native (jpackage)
+        run: |
+          rm -rf build-in build-out build-pkg dist
+          mkdir -p build-in build-out build-pkg dist
+          cp "target/latice-${VERSION}.jar" build-in/
+          case "${{ matrix.id }}" in
+            macos-*)   ICON=packaging/icons/latice.icns; EXTRA=(--mac-package-identifier com.github.sdelmart.latice --mac-package-name Latice) ;;
+            windows-*) ICON=packaging/icons/latice.ico;  EXTRA=() ;;
+            *)         ICON=packaging/icons/latice.png;  EXTRA=() ;;
+          esac
+          jpackage --type app-image \
+            --input build-in --main-jar "latice-${VERSION}.jar" --main-class main.Main \
+            --name Latice --app-version "$VERSION" --vendor "Scott Delmart" \
+            --description "Jeu de société Latice" \
+            --icon "$ICON" --add-modules "$MODULES" "${EXTRA[@]}" \
+            --dest build-out
+          ls -la build-out
+
+      - name: Vérifier le paquet (ressources, SQLite, natifs JavaFX)
+        run: |
+          case "${{ matrix.id }}" in
+            macos-*)   LAUNCHER="build-out/Latice.app/Contents/MacOS/Latice" ;;
+            windows-*) LAUNCHER="build-out/Latice/Latice.exe" ;;
+            *)         LAUNCHER="build-out/Latice/bin/Latice" ;;
+          esac
+          rm -f rapport.txt
+          set +e
+          "$LAUNCHER" --verifier-ressources rapport.txt
+          CODE=$?
+          set -e
+          echo "code de sortie : $CODE"
+          cat rapport.txt
+          grep -q "^OK" rapport.txt
+          [ "$CODE" -eq 0 ]
+
+      - name: Vérifier la signature (macOS)
+        if: startsWith(matrix.id, 'macos-')
+        run: |
+          codesign --verify --deep --strict build-out/Latice.app
+          codesign -dv build-out/Latice.app 2>&1 | head -5
+
+      - name: Archiver
+        run: |
+          NAME="Latice-${VERSION}-${{ matrix.id }}"
+          case "${{ matrix.id }}" in
+            macos-*) APP=Latice.app ;;
+            *)       APP=Latice ;;
+          esac
+          COPYFILE_DISABLE=1 tar -czf "dist/${NAME}.tar.gz" -C build-out "$APP"
+          if [[ "${{ matrix.id }}" == windows-* ]]; then
+            (cd build-out && 7z a -tzip "../dist/${NAME}.zip" Latice > /dev/null)
+          fi
+          ls -la dist
+
+      # Installeurs natifs : utiles mais dépendent d'outils de la machine (WiX, fakeroot, hdiutil) ;
+      # si l'un d'eux manque, la release est quand même publiée avec les archives.
+      - name: Installeur macOS (.dmg)
+        if: startsWith(matrix.id, 'macos-')
+        continue-on-error: true
+        run: |
+          jpackage --type dmg --app-image build-out/Latice.app --name Latice \
+            --app-version "$VERSION" --dest build-pkg
+          mv build-pkg/*.dmg "dist/Latice-${VERSION}-${{ matrix.id }}.dmg"
+
+      - name: Installeur Linux (.deb)
+        if: startsWith(matrix.id, 'linux-')
+        continue-on-error: true
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq fakeroot
+          jpackage --type deb --app-image build-out/Latice --name latice \
+            --app-version "$VERSION" --linux-shortcut --linux-menu-group Game \
+            --linux-deb-maintainer "118569837+sdelmart@users.noreply.github.com" --dest build-pkg
+          mv build-pkg/*.deb "dist/Latice-${VERSION}-${{ matrix.id }}.deb"
+
+      - name: Installeur Windows (.msi)
+        if: startsWith(matrix.id, 'windows-')
+        continue-on-error: true
+        run: |
+          choco install wixtoolset --no-progress -y
+          export PATH="$PATH:/c/Program Files (x86)/WiX Toolset v3.14/bin:/c/Program Files (x86)/WiX Toolset v3.11/bin"
+          jpackage --type msi --app-image build-out/Latice --name Latice \
+            --app-version "$VERSION" --win-menu --win-shortcut --win-dir-chooser --win-per-user-install \
+            --dest build-pkg
+          mv build-pkg/*.msi "dist/Latice-${VERSION}-${{ matrix.id }}.msi"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: paquets-${{ matrix.id }}
+          path: dist/*
+          if-no-files-found: error
+
+  publier:
+    name: Publier la release
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: paquets-*
+          merge-multiple: true
+          path: dist
+
+      - name: Sommes de contrôle
+        working-directory: dist
+        run: |
+          sha256sum * > SHA256SUMS.txt
+          cat SHA256SUMS.txt
+
+      - name: Créer la release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          sed "s/@VERSION@/${VERSION}/g" .github/release-notes.md > notes.md
+          gh release create "$GITHUB_REF_NAME" dist/* \
+            --title "Latice $GITHUB_REF_NAME" --notes-file notes.md --verify-tag
