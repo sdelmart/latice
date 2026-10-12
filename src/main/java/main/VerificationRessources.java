@@ -6,6 +6,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -53,8 +55,10 @@ public final class VerificationRessources {
         for (PisteMusicale piste : PisteMusicale.values()) {
             exiger(problemes, piste.chemin());
         }
-        try (Connection connexion = DriverManager.getConnection("jdbc:sqlite::memory:")) {
-            if (!connexion.createStatement().executeQuery("SELECT 1").next()) {
+        try (Connection connexion = DriverManager.getConnection("jdbc:sqlite::memory:");
+                Statement requete = connexion.createStatement();
+                ResultSet resultat = requete.executeQuery("SELECT 1")) {
+            if (!resultat.next()) {
                 problemes.add("SQLite : requête de test sans résultat");
             }
         } catch (Exception e) {

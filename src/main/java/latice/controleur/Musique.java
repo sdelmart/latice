@@ -19,10 +19,6 @@ public class Musique {
     private MediaPlayer mediaPlayer;
     private PisteMusicale pisteActuelle = PisteMusicale.parDefaut();
 
-    public MediaPlayer getMediaPlayer() {
-    	return mediaPlayer;
-    	}
-
     /** Relance la dernière musique/volume choisis par l'utilisateur (ou les valeurs par défaut au premier lancement). */
     public void demarrerAvecPreferences() {
         String cheminSauvegarde = PREFS.get(CLE_PISTE, PisteMusicale.parDefaut().chemin());

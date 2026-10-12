@@ -100,6 +100,16 @@
 				</configuration>
 			</plugin>
 
+			<!-- Analyse statique : `mvn com.github.spotbugs:spotbugs-maven-plugin:4.8.6.4:check` (lancée par la CI) -->
+			<plugin>
+				<groupId>com.github.spotbugs</groupId>
+				<artifactId>spotbugs-maven-plugin</artifactId>
+				<version>4.8.6.4</version>
+				<configuration>
+					<excludeFilterFile>spotbugs-exclude.xml</excludeFilterFile>
+				</configuration>
+			</plugin>
+
 			<!-- Couverture de tests : rapport dans target/site/jacoco/index.html après `mvn test` -->
 			<plugin>
 				<groupId>org.jacoco</groupId>

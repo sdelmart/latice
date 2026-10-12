@@ -89,7 +89,7 @@ sont donc exclus par défaut (utile en CI headless). Pour les inclure sur un pos
 
 ## Intégration continue
 
-Chaque push/PR sur `main` déclenche [la CI GitHub Actions](.github/workflows/ci.yml) : les 66 tests (hors tests d'interface, voir ci-dessus) tournent sur Ubuntu, Windows et macOS, un jar exécutable est construit et vérifié, et une analyse statique (SpotBugs) s'exécute en non-bloquant.
+Chaque push/PR sur `main` déclenche [la CI GitHub Actions](.github/workflows/ci.yml) : les 65 tests (hors tests d'interface, voir ci-dessus) tournent sur Ubuntu, Windows et macOS, un jar exécutable est construit et vérifié, et l'analyse statique (SpotBugs) doit passer sans aucun signalement.
 
 Pousser un tag `vX.Y.Z` (égal à la version du `pom.xml`) lance [le workflow de release](.github/workflows/release.yml) : l'application est empaquetée avec `jpackage` sur Linux x64 et ARM64, macOS Intel et Apple Silicon, et Windows, chaque paquet est vérifié, puis la release GitHub est publiée avec les archives, les installeurs et `SHA256SUMS.txt`.
 

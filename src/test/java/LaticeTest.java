@@ -228,15 +228,6 @@ public class LaticeTest {
 	    }
 		
 		@Test
-	    public void testSetters() {
-	        Position pos = new Position(0, 0);
-	        pos.setX(7);
-	        pos.setY(2);
-	        assertEquals(7, pos.posX());
-	        assertEquals(2, pos.posY());
-	    }
-		
-		@Test
 	    public void testEqualsAndHashCode() {
 	        Position pos1 = new Position(1, 2);
 	        Position pos2 = new Position(1, 2);

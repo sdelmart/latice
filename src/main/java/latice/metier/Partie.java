@@ -1,7 +1,6 @@
 package latice.metier;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -40,7 +39,7 @@ public class Partie {
     }
 
     public Map<Position, Tuile> tuilesPlacees() {
-        return Collections.unmodifiableMap(plateau.obtenirTuilesPlacees());
+        return plateau.obtenirTuilesPlacees();
     }
 
     public Joueur joueur1() {
@@ -140,7 +139,7 @@ public class Partie {
         if (!peutAcheterOuEchanger() || joueur.pioche() == null) {
             throw new IllegalStateException("Échange impossible");
         }
-        joueur.pioche().avoirTuiles().addAll(joueur.rack().obtenirTuilesRack());
+        joueur.pioche().remettreSousLaPioche(joueur.rack().obtenirTuilesRack());
         joueur.rack().vider();
         completerRack(joueur);
         finirTour();
@@ -232,7 +231,7 @@ public class Partie {
 
     private static Joueur reconstituer(Sauvegarde.EtatJoueur etat) {
         Joueur joueur = new Joueur(etat.nom());
-        joueur.points = etat.points();
+        joueur.definirPoints(etat.points());
         joueur.nbActionsSup = etat.actionsSup();
         etat.rack().forEach(joueur.rack()::ajouterTuile);
         joueur.fairePioche(new Pioche(etat.pioche(), etat.indexPioche()));

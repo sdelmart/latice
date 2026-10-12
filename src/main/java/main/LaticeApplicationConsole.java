@@ -222,7 +222,7 @@ public class LaticeApplicationConsole {
             return;
         }
 
-        joueur.pioche().avoirTuiles().addAll(joueur.rack().obtenirTuilesRack());
+        joueur.pioche().remettreSousLaPioche(joueur.rack().obtenirTuilesRack());
         joueur.rack().vider();
 
         while (!joueur.rack().estPlein() && !joueur.pioche().estVide()) {

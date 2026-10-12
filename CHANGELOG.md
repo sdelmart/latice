@@ -14,7 +14,7 @@ Toutes les évolutions notables du projet, de la reprise après la SAE de groupe
 
 ### Architecture et qualité
 - Nouvelle classe métier `Partie` (état et déroulement d'une partie, sans JavaFX) ; `ControleurDeJeu` devient une simple couche d'affichage. Suppression des doubles copies de l'état du plateau.
-- 66 tests (contre 36) : règles, parties IA contre IA complètes avec vérification des invariants du plateau, sauvegarde/reprise, présence des ressources, tests d'interface de l'écran de jeu.
+- 65 tests (contre 36) : règles, parties IA contre IA complètes avec vérification des invariants du plateau, sauvegarde/reprise, présence des ressources, tests d'interface de l'écran de jeu.
 - Les tests n'écrivent plus jamais dans `~/.latice` (dossier de données redirigeable).
 - Option `--verifier-ressources` : vérifie qu'un build contient toutes ses ressources, SQLite et bibliothèques natives JavaFX.
 

@@ -74,7 +74,7 @@ class PartieTest {
     void acheterUneActionPermetUneSecondeTuileMaisCoute2Points() {
         Partie partie = new Partie("Alice", "Bob");
         Joueur joueur = partie.joueurCourant();
-        joueur.points = 3;
+        joueur.definirPoints(3);
         Tuile premiere = t(Couleur.ROUGE, Symbole.FLEUR);
         Tuile seconde = t(Couleur.ROUGE, Symbole.OISEAU);
         donnerAuJoueurCourant(partie, premiere, seconde);
@@ -95,10 +95,10 @@ class PartieTest {
     void acheterEstRefuseSansAssezDePointsOuApresAvoirPose() {
         Partie partie = new Partie("Alice", "Bob");
         Joueur joueur = partie.joueurCourant();
-        joueur.points = 1;
+        joueur.definirPoints(1);
         assertFalse(partie.acheterActionSupplementaire());
 
-        joueur.points = 10;
+        joueur.definirPoints(10);
         Tuile tuile = t(Couleur.ROUGE, Symbole.FLEUR);
         donnerAuJoueurCourant(partie, tuile);
         partie.placer(new Position(4, 4), tuile);

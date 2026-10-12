@@ -55,9 +55,14 @@ public class Pioche {
         Collections.shuffle(tuiles);
     }
 
-    // Retourne la liste des tuiles
+    // Retourne la liste des tuiles (lecture seule)
     public List<Tuile> avoirTuiles() {
-        return tuiles;
+        return Collections.unmodifiableList(tuiles);
+    }
+
+    // Remet des tuiles sous la pioche (échange de rack)
+    public void remettreSousLaPioche(java.util.Collection<Tuile> tuilesRendues) {
+        tuiles.addAll(tuilesRendues);
     }
 
     // Pioche une tuile de la pioche

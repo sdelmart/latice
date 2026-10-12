@@ -8,6 +8,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
@@ -25,8 +26,18 @@ import latice.enumeration.Symbole;
  */
 public record Sauvegarde(boolean solo, int joueurCourant, List<EtatJoueur> joueurs, List<TuilePosee> plateau) {
 
+    public Sauvegarde {
+        joueurs = Collections.unmodifiableList(new ArrayList<>(joueurs));
+        plateau = Collections.unmodifiableList(new ArrayList<>(plateau));
+    }
+
     public record EtatJoueur(String nom, Couleur couleur, int points, int actionsSup, int toursRestants,
             int tuilesPosees, List<Tuile> rack, List<Tuile> pioche, int indexPioche) {
+
+        public EtatJoueur {
+            rack = List.copyOf(rack);
+            pioche = List.copyOf(pioche);
+        }
     }
 
     public record TuilePosee(Position position, Tuile tuile) {
@@ -86,9 +97,16 @@ public record Sauvegarde(boolean solo, int joueurCourant, List<EtatJoueur> joueu
         }
         p.setProperty("plateau", plateau.toString());
 
+        Path nomDuFichier = fichier.getFileName();
+        if (nomDuFichier == null) {
+            throw new IllegalArgumentException("Chemin de sauvegarde invalide : " + fichier);
+        }
         try {
-            Files.createDirectories(fichier.toAbsolutePath().getParent());
-            Path temporaire = fichier.resolveSibling(fichier.getFileName() + ".tmp");
+            Path dossier = fichier.toAbsolutePath().getParent();
+            if (dossier != null) {
+                Files.createDirectories(dossier);
+            }
+            Path temporaire = fichier.resolveSibling(nomDuFichier + ".tmp");
             try (Writer ecrivain = Files.newBufferedWriter(temporaire, StandardCharsets.UTF_8)) {
                 p.store(ecrivain, "Latice - partie en cours");
             }

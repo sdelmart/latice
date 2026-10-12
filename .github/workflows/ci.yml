@@ -78,9 +78,8 @@ jobs:
           path: target/latice-*.jar
 
   static-analysis:
-    name: Static analysis (SpotBugs, non-bloquant)
+    name: Static analysis (SpotBugs)
     runs-on: ubuntu-latest
-    continue-on-error: true
     steps:
       - name: Checkout
         uses: actions/checkout@v4

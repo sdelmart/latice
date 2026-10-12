@@ -5,7 +5,7 @@ public class Joueur {
     private final String nom; 
     private final Rack rack;
     private Pioche pioche; 
-    public Integer points = 0; // Points du joueur, initialisés à 0
+    private Integer points = 0; // Points du joueur, initialisés à 0
     public int nbActionsSup = 0; // Nombre d'actions supplémentaires achetées
 	public int nbActions = 1; // Nombre d'actions par tour, initialisé à 1
 
@@ -37,6 +37,11 @@ public class Joueur {
     // Retourne les points du joueur
     public Integer points() {
         return points;
+    }
+
+    // Fixe directement les points (reprise d'une partie sauvegardée)
+    public void definirPoints(int valeur) {
+        this.points = valeur;
     }
 
     // Ajoute des points au joueur

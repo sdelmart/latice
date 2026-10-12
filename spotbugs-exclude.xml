@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter>
+    <!-- ThemeVisuel expose volontairement une propriété JavaFX observable : c'est ce qui permet à toutes
+         les fenêtres ouvertes de suivre en direct le fond d'écran choisi dans les Paramètres. -->
+    <Match>
+        <Class name="latice.controleur.ThemeVisuel"/>
+        <Bug pattern="MS_EXPOSE_REP"/>
+    </Match>
+    <!-- Les listes de Sauvegarde sont copiées puis rendues non modifiables dans le constructeur compact du record ;
+         SpotBugs ne suit pas cette copie défensive et signale à tort l'accesseur généré. -->
+    <Match>
+        <Class name="latice.metier.Sauvegarde"/>
+        <Or>
+            <Method name="joueurs"/>
+            <Method name="plateau"/>
+        </Or>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+</FindBugsFilter>
